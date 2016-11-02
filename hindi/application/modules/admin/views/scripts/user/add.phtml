@@ -1,0 +1,207 @@
+<?php @extract($_POST);?>
+
+<?php
+$sql = "SELECT city FROM `location` GROUP BY city ORDER BY city";
+//echo $sql;die(); 
+$rsCity = Zend_Registry::get("db")->fetchAll($sql);
+
+//$fname = '';
+//$lname = '';
+//$email = '';
+//$mobileno = '';
+//$city = ''; 
+//$user_type = '';
+?>
+<!-- / PHOTO PREVIEW -->
+<script type="text/javascript">//<![CDATA[ 
+	$(window).load(function () {
+		function readPhotoURL(input) {
+			//alert(input.files[0].size);
+		    if (input.files[0].size < 10000 || input.files[0].size > 100000) {
+				alert('Please photo image size is minimum 10kb and maximum 100kb only');
+				$("#image").val('');
+				$('#imgPhoto').hide();
+				return (false);
+			}
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+				$('#image').show();
+				reader.onload = function (e) {
+					$('#imgPhoto').show();
+					$('#imgPhoto').attr('src', e.target.result);
+				}
+				reader.readAsDataURL(input.files[0]);
+			}
+		}
+
+		$("#image").change(function () {
+			var imgName = $("#image").val();
+			var sptImgName;
+			var extImageName;
+			if ($.browser.mozilla == false) {
+				sptImgName = imgName.split("\\");
+				extImageName = sptImgName[2].split('.');
+
+			} else {
+				sptImgName = imgName;
+				extImageName = sptImgName.split('.');
+			}
+
+			var getExt = extImageName[1];
+			if (getExt != 'jpg' && getExt != 'jpeg') {
+				alert('Please upload JPG, JPEG file in Photo of the post.');
+				$('#image').val('');
+				$('#imgPhoto').hide();
+				return (false);
+			} //else { //$('#imgPhoto').show(); }
+
+			if ($.browser.chrome || $.browser.mozilla) {
+				readPhotoURL(this);
+			} else if ($.browser.msie) {
+				$('#imgPhoto').show();
+				document.getElementById('imgPhoto').src = $("#txtphoto").val();
+			}
+		});
+	});//]]>  
+</script>
+<!-- / PHOTO PREVIEW -->
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Add User</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/user/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    <?php if(!empty($error)){ echo $error;}?>
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          	<?php if(!empty($error)){ echo $error;}?>
+          <form class="form-horizontal form-bordered" name="form1" id="form1" action="<?php echo $this->baseUrl();?>/admin/user/add" method="post" enctype="multipart/form-data">
+                       
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Name</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter First Name" name="fname" id="fname" value="<?php if(!empty($_POST['fname'])){echo $_POST['fname'];}?>" class="form-control" />
+              	<div class="error_container"><span class="error"><?php if(!empty($this->error['fname'])){ echo $this->error['fname'];}?></span></div>
+              </div>
+            </div>
+            
+            <!--<div class="form-group">
+				  <label class="col-sm-3 control-label" for="disabledinput">Last Name</label>
+				  <div class="col-sm-6">
+					 <input type="text" placeholder="Enter Last Name" name="lname" id="lname" value="<?php if(!empty($_POST['lname'])){echo $_POST['lname'];}?>" class="form-control" required />
+				  </div>
+			</div>-->
+            <div class="form-group">
+				  <label class="col-sm-3 control-label" for="disabledinput">Email</label>
+				  <div class="col-sm-6">
+					 <input type="email" placeholder="Enter Email-Id" name="email" id="email" value="<?php if(!empty($_POST['email'])){echo $_POST['email'];}?>" class="form-control" />
+				  	<div class="error_container"><span class="error"><?php if(!empty($this->error['email'])){ echo $this->error['email'];}?></span></div>
+              		</div>
+				</div>
+            <div class="form-group">
+				  <label class="col-sm-3 control-label" for="disabledinput">Mobile</label>
+				  <div class="col-sm-6">
+					 <input type="text" placeholder="Enter Mobile No." name="mobileno" id="mobileno" value="<?php if(!empty($_POST['mobileno'])){echo $_POST['mobileno'];}?>" maxlength="10" class="form-control" />
+                     <div class="error_container"><span class="error"><?php if(!empty($this->error['mobileno'])){ echo $this->error['mobileno'];}?></span></div>
+				  </div>
+				</div>
+              <div class="form-group">
+				  <label class="col-sm-3 control-label" for="disabledinput">Password</label>
+				  <div class="col-sm-6">
+					 <input type="password" placeholder="Enter Password" name="password" id="password" value="<?php if(!empty($_POST['password'])){echo $_POST['password'];}?>" class="form-control" />
+                     <div class="error_container"><span class="error"><?php if(!empty($this->error['password'])){ echo $this->error['password'];}?></span></div>
+				  </div>
+				</div>
+              <div class="form-group">
+				  <label class="col-sm-3 control-label" for="disabledinput">Confirm Password</label>
+				  <div class="col-sm-6">
+					 <input type="password" placeholder="Enter Confirm Password" name="cpassword" id="cpassword" value="<?php if(!empty($_POST['cpassword'])){echo $_POST['cpassword'];}?>" class="form-control" />
+                     <div class="error_container"><span class="error"><?php if(!empty($this->error['cpassword'])){ echo $this->error['cpassword'];}?></span></div>
+				  </div>
+				<!--<div class="form-group">
+              <label class="col-sm-3 control-label">Select State</label>
+              <div class="col-sm-5">
+                <select class="select2" id="state" name="state" data-placeholder="Choose a State...">
+                  <option value=""></option>
+                  <option value="bihar">Bihar</option>
+                  <option value="jharkhand">Jharkhand</option>
+                  <option value="uttar Pradesh">Uttar Pradesh</option>
+                  <option value="uttarakhand">Uttarakhand</option>
+                  <option value="rajasthan">Rajasthan</option>
+                  </select>
+              </div>
+            </div>   -->
+            </div> 
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="disabledinput">फोटो लगाएं</label>
+                <div class="col-sm-6">
+                <input type="file" name="image" id="image" class="form-control" />
+            	<div class="btn-group"><img id="imgPhoto" src="<?php echo $userphoto;?>" style="display:none;margin:10px;width:50px;height:50px;border-radius:60px;padding:2px; border:2px #666 solid;"></div>
+            	</div> 
+             </div>
+             <!--<div class="form-group">
+              <label class="col-sm-3 control-label">Select City</label>
+              <div class="col-sm-5">
+                <select class="select2" name="city" id="city" data-placeholder="Choose a City...">
+                  <option value=""></option>
+                  	<?php
+					//if($rsCity){ 
+					///	foreach($rsCity as $cityVal)
+					//	{ 
+					//		if (strtolower($cityVal['city']) == strtolower($city)){
+					//			echo '<option selected="selected" value="'.$cityVal['city'].'">'.$cityVal['city'].'</option>';
+					//		} else {
+					//			echo '<option value="'.$cityVal['city'].'">'.$cityVal['city'].'</option>';
+					//		}
+					//	}
+					//}
+					?>
+                  </select>
+                  <div class="error_container"><span class="error"><?php //if(!empty($this->error['city'])){ echo $this->error['city'];}?></span></div>
+				</div>
+            </div>  -->
+            <div class="form-group">
+              <label class="col-sm-3 control-label">User Type</label>
+              <div class="col-sm-5">
+              	<?php
+				if(!empty($_POST['user_type'])){
+					$user_type = $_POST['user_type'];					
+				}
+				?>
+                <select class="select2" name="user_type" id="user_type" data-placeholder="Choose a User Type...">
+                  <option value=""></option>
+                  <option value="0" <?php if(!empty($_POST['user_type'])){if($_POST['user_type'] == '0'){echo 'selected="selected"';}}?>>Editor</option>
+                  <option value="1" <?php if(!empty($_POST['user_type'])){if($_POST['user_type'] == '1'){echo 'selected="selected"';}}?>>Sub-Editor</option>
+                  <option value="2" <?php if(!empty($_POST['user_type'])){if($_POST['user_type'] == '2'){echo 'selected="selected"';}}?>>Reporter</option>
+                 </select>
+                 <div class="error_container"><span class="error"><?php if(!empty($this->error['user_type'])){ echo $this->error['user_type'];}?></span></div>
+				</div>
+            </div>    
+        	 <!--<div class="form-group">
+              <label class="col-sm-3 control-label" for="disabledinput">Permission</label>
+              <div class="col-sm-6">
+                 <input type="checkbox" name="permAdd" id="permAdd" value="CHECKED" /> <label for="permAdd">Add</label>
+                 <input type="checkbox" name="permEdit" id="permEdit" value="CHECKED" /> <label for="permEdit">Edit</label>
+                 <input type="checkbox" name="permDelete" id="permDelete" value="CHECKED" /> <label for="permDelete">Delete</label>
+                 <div class="error_container"><span class="error"><?php //if(!empty($this->error['permission'])){ echo $this->error['permission'];}?></span></div>
+              </div>
+            </div>-->
+              
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Submit</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+             </form>
+		  </div><!-- panel-footer -->
+        
+      </div><!-- panel -->

@@ -1,0 +1,49 @@
+.textwhite{color:#fff}.textgreen{color:#9c0}.textpink{color:#ff1489;margin:0}a.textpink{color:#ff1489}a.textpink:hover{color:#1783db}.textblue{color:#1783db;margin:0}a.textblue{color:#1783db}a.textblue:hover{color:#ff1489}.textpurple{color:#9c27b0;margin:0}a.textpurple{color:#9c27b0}a.textpurple:hover{color:#ff1489}.floatright{float:right;padding:0 10px}.mt5{margin-top:5px}.mt10{margin-top:10px}.mr5{margin-right:5px}.mb5{margin-bottom:5px}.pad5{padding:5px}.h3-min-height1{min-height:175px;max-height:200px}.textjustify{text-align:justify}.textcenter{text-align:center}.breakingnews{background-color:#32aae1;color:#FFF;font-size:17px;border-top-left-radius:10px;border-top-right-radius:10px;height:40px;vertical-align:central;padding:5px;margin:10px 10px 0 15px}.text10{font-size:10px}.text11{font-size:11px}.text12{font-size:12px}.text13{font-size:13px}.text14{font-size:14px}.text15{font-size:15px}.text16{font-size:16px}.text17{font-size:17px}.text18{font-size:18px}.text19{font-size:19px}.text20{font-size:20px}.text21{font-size:21px}.text22{font-size:22px}.effect2{position:relative}.effect2:before,.effect2:after{z-index:-1;position:absolute;content:"";bottom:15px;left:10px;width:50%;top:80%;max-width:300px;background:#777;-webkit-box-shadow:0 15px 10px #777;-moz-box-shadow:0 15px 10px #777;box-shadow:0 15px 10px #777;-webkit-transform:rotate(-3deg);-moz-transform:rotate(-3deg);-o-transform:rotate(-3deg);-ms-transform:rotate(-3deg);transform:rotate(-3deg)}.effect2:after{-webkit-transform:rotate(3deg);-moz-transform:rotate(3deg);-o-transform:rotate(3deg);-ms-transform:rotate(3deg);transform:rotate(3deg);right:10px;left:auto}.f-nav{z-index:9999;position:fixed;top:0;width:100%;background-color:#19232d}.f-breaking{display:none}
+.share-button-div .share-button-ul{
+	border:0px solid #000;	
+	float:left;
+	width: 100%;
+	padding: 0px;
+}
+.share-button-ul li{
+	list-style:none;
+	display:inline; 
+	
+	}
+.share-button-ul li{
+	list-style:none;
+	display:inline-block; 
+	padding:5px;
+	color:#fff;
+	font-size:19px;
+	width: 20%;
+    text-align: center;
+	}
+.whatsapp-li{
+	background-color:#2BB200;
+	width:20%;
+}
+.facebook-li{
+	background-color:#3B65C3;
+	width:20%;
+}
+.google-plus-li{
+	background-color:#CF4331;
+	width:20%;
+}
+.twitter-li{
+	background-color:#33CCFF;
+	width:20%;
+}
+.envelope-o-li{
+	background-color:#4580A3;
+	width:20%;
+}
+a.whatsapp-li, a.facebook-li, a.google-plus-li, a.twitter-li, a.envelope-o-li{
+	color:#fff;
+}
+
+#whatsapp-li{display:none;}
+@media (max-width:768px) { #whatsapp-li{display:inline-block; } }
+
+

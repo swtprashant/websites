@@ -1,0 +1,481 @@
+<?php
+$_SESSION['timeout'] = 60;
+		
+include_once('public/fckeditor/fckeditor.php');
+//admin session object create
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$city = $recods['city'];
+$usertype = $recods['user_type'];
+?>
+	<script type="text/javascript">
+    $(document).ready(function() {
+            $("#city").change(function() {
+            //alert($(this).val());
+            url = '<?php echo $this->baseUrl();?>/admin/post/ajaxcall?city='+$(this).val();
+            //alert(url);
+            //$("#block option:selected").remove();
+            $.get(url, function(data) {
+                $("#location_id").html(data);
+            });
+            
+        });
+    
+    });
+    </script>
+	<!-- DATE PICKER -->
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+	<!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery-ui.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.js"></script>
+    <link href="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.css" rel="stylesheet" />
+    <script>
+	$(function() {
+    	$( "#scheduleDate" ).datepicker({ 
+			minDate: -0, 
+			maxDate: "+10D", 
+			dateFormat: 'yy-m-d'
+         });
+  	
+		$('#scheduleTime').timepicker();
+    });
+    </script>
+    <!-- / DATE PICKER -->
+    
+	<!-- / PHOTO PREVIEW -->
+    <script type="text/javascript">//<![CDATA[ 
+        $(window).load(function () {
+            function readPhotoURL(input) {
+                //alert(input.files[0].size);
+                if (input.files[0].size > 2097152) {
+                    alert('Please photo image size maximum 2mb only');
+                    $("#image").val('');
+					$('#imgPhoto').hide();
+                    return (false);
+                }
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    $('#image').show();
+                    reader.onload = function (e) {
+						$('#imgPhoto').show();
+                        $('#imgPhoto').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image").change(function () {
+                var imgName = $("#image").val();
+                var sptImgName;
+                var extImageName;
+                if ($.browser.mozilla == false) {
+                    sptImgName = imgName.split("\\");
+                    extImageName = sptImgName[2].split('.');
+
+                } else {
+                    sptImgName = imgName;
+                    extImageName = sptImgName.split('.');
+                }
+
+                var getExt = extImageName[1];
+                if (getExt != 'jpg' && getExt != 'jpeg') {
+                    alert('Please upload JPG, JPEG file in Photo of the post.');
+                    $('#image').val('');
+					$('#imgPhoto').hide();
+                    return (false);
+                } //else { //$('#imgPhoto').show(); }
+
+                if ($.browser.chrome || $.browser.mozilla) {
+                    readPhotoURL(this);
+                } else if ($.browser.msie) {
+                    $('#imgPhoto').show();
+                    document.getElementById('imgPhoto').src = $("#txtphoto").val();
+                }
+            });
+        });//]]>  
+    </script>
+    <!-- / PHOTO PREVIEW -->
+    
+    <script type="text/javascript">
+	function sendData(isClick)
+	{
+		if(isClick == "Y"){
+			var audioFile = $('#audioFile').val();
+			var mediaTitle = $('#mediaTitle').val();
+			
+			if (audioFile == '')
+			{
+				alert('Please select audio file')
+				$('#audioFile').focus();
+				return (false)	
+			}
+			if (mediaTitle == '')
+			{
+				alert('Please enter media title')
+				$('#mediaTitle').focus();
+				return (false)	
+			}
+		}
+		
+		var data = new FormData($('#frmpost')[0]);
+		$.ajax({
+			type:"POST",
+			url:"<?php echo $this->baseUrl();?>/admin/post/ajaxmediaupload",
+			data:data,
+			mimeType: "multipart/form-data",
+			contentType: false,
+			cache: false,
+			processData: false,
+			success:function(data)
+			{
+				//alert(data);
+				$("#preview").html(data);
+				//$('#audioFile').val(null);
+				//$('#mediaTitle').val(null);
+		
+			}
+		});
+	}
+	</script>
+    
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Add Post</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/post/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+    	<form name="frmpost" id="frmpost" enctype="multipart/form-data" method="post" action="<?php echo $this->baseUrl();?>/admin/post/add">
+        <div class="form-group">
+        	<div class="col-sm-8">    
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">कैटगरी</label>
+                  <div class="col-sm-8">
+                  <?php 
+                  $query = "SELECT * FROM `category` WHERE status = 1 ORDER BY category";
+                  $res = Zend_Registry::get("db")->fetchAll($query);
+                  ?>
+                  <select class="select2" name="category[]" id="category" multiple="multiple">
+                  <?php if($res){ foreach($res as $val){ ?>
+                  <option value="<?php echo $val['category_id'];?>"><?php echo $val['category'];?></option>
+                 <?php }}?>
+                  </select>
+                  </div>
+                </div>
+                <?php
+                if($usertype != 2){
+                ?>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">प्रीयॉरिटी</label>
+                  <div class="col-sm-8">
+                    <select class="select2" id="priority" name="priority">
+                     <option value="">Select a priority</option>
+                      <?php 
+                      for ($i=1; $i<=5; $i++){
+                        ?>
+                            <option value="<?php echo $i;?>"><?php echo $i;?></option>
+                      <?php	  
+                      }
+                      ?>                 
+                      </select>
+                  </div>
+                </div>
+                <?php }?>  
+                <?php
+                if($usertype != 0 && $usertype != 1){
+                ?> 
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">शहर</label>
+                  <div class="col-sm-8">
+                    <input type="text" id="city" name="city" value="<?php echo $city;?>" readonly="readonly" class="form-control" />
+                  </div>
+                </div>
+                 <div class="form-group">
+                  <label class="col-sm-4 control-label">प्रखंड</label>
+                  <div class="col-sm-8">
+                  <?php 
+                  $query = "SELECT location_id, CONCAT(UCASE(MID(block_name,1,1)),LCASE(MID(block_name,2))) AS block_name FROM `location` WHERE `city`= '$city'";
+                  $res = Zend_Registry::get("db")->fetchAll($query);
+                  ?>
+                    <select class="select2" id="location_id" name="location_id" data-placeholder="Select a block" >
+                    <option value=""></option>
+                      <?php if($res){ foreach($res as $val){ ?>
+                      <option value="<?php echo $val['location_id'];?>"><?php echo $val['block_name'];?></option>
+                      <?php }}?>
+                     </select>
+                  </div>
+                </div> 
+                 <?php }?>
+                 <?php
+                if($usertype != 2){
+                ?>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Select City</label>
+                  <div class="col-sm-8">
+                   <?php 
+                  $query = "SELECT DISTINCT CONCAT(UCASE(MID(city,1,1)),LCASE(MID(city,2))) AS city FROM `location`";
+                  $res = Zend_Registry::get("db")->fetchAll($query);
+                  ?>
+                    <select class="select2" id="city" name="city" data-placeholder="Choose a City..." >
+                    <option value=""></option>
+                      <?php if($res){ foreach($res as $val){ ?>
+                      <option value="<?php echo $val['city'];?>"><?php echo $val['city'];?></option>
+                      <?php }}?>
+                     </select>
+                  </div>
+                </div> 
+                
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">प्रखंड</label>
+                  <div class="col-sm-8">
+                  <select name="location_id" class="select2" id="location_id">
+                    <option value="">Please select</option>
+                  </select>
+                  </div>
+                </div>   
+                  <?php }?>  
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">हेडलाइन</label>
+                  <div class="col-sm-8">
+                    <input type="text" placeholder="Enter Headline" id="headline" name="headline" class="form-control" maxlength="62" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">हेडलाइन टाइप</label>
+                  <div class="col-sm-8">
+                    <select name="postType" id="postType" class="select2">
+                        <option value="">Select</option>
+                        <option value="EXCLUSIVE">EXCLUSIVE</option>
+                        <option value="FLASH">FLASH</option>
+                        <option value="STING OPERATION">STING OPERATION</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">इंट्रो</label>
+                  <div class="col-sm-8">
+                    <textarea class="form-control" id="intro" name="intro" rows="5" ></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                      <label class="col-sm-4 control-label" for="disabledinput">फोटो लगाएं</label>
+                      <div class="col-sm-8">
+                         <input type="file" name="image" id="image" class="form-control" />
+                         <img id="imgPhoto" src="<?php echo $this->baseUrl();?>/public/admin/images/Blank.png" style="display:none;height:100px;width:150px;">
+                         <span id="lblError2" style="color: red;"></span>
+                      </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Video URL</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="videoURL" id="videoURL" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Reporter</label>
+                    <div class="col-sm-8">
+                        <?php 
+                        $query = "SELECT user_id AS idReporter, CONCAT(first_name, ' ', last_name) AS reporterName FROM `user` WHERE user_type = 2";
+                        $res = Zend_Registry::get("db")->fetchAll($query);
+                        ?>
+                            <select class="select2" id="idReporter" name="idReporter" data-placeholder="Select" >
+                            <option value=""></option>
+                            <?php if($res){ foreach($res as $val){ ?>
+                            <option value="<?php echo $val['idReporter'];?>"><?php echo $val['reporterName'];?></option>
+                            <?php }}?>
+                            </select>
+                      </div>
+                </div> 
+                <?php
+                if($usertype != 2){
+                ?>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">English URL</label>
+                  <div class="col-sm-8">
+                 <input type="text" placeholder="Enter English URL" id="englishurl" name="englishurl" class="form-control" maxlength="62" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                <label class="col-sm-4 control-label">Meta Title</label>
+                  <div class="col-sm-8">
+                    <input type="text" placeholder="Enter Meta title" id="metatitle" name="metatitle" class="form-control" maxlength="62" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Meta Keyword</label>
+                  <div class="col-sm-8">
+                    <textarea class="form-control" id="metakeyword" name="metakeyword" rows="5" ></textarea>
+                  </div>
+               </div>
+                
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Meta Description</label>
+                  <div class="col-sm-8">
+                    <textarea class="form-control" id="metadescription" name="metadescription" rows="5" ></textarea>
+                  </div>
+                </div>
+                <?php }?> 
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                	<label class="col-sm-4 control-label">Upload Audio</label>
+                    <div class="col-sm-8">
+                    	<input class="form-control" type="file" name="audioFile" id="audioFile" />
+                    </div>
+                </div>
+                <div class="form-group">
+                	<label class="col-sm-4 control-label">Audio Title</label>
+                    <div class="col-sm-8">
+                    	<input class="form-control" type="text" name="mediaTitle" id="mediaTitle" maxlength="50" />
+                    </div>
+                </div>
+                <div class="form-group">
+                	<label class="col-sm-4 control-label"></label>
+                    <div class="col-sm-8">
+                    	<input type="button" value="Upload" onclick = "return sendData('Y')"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                	<div class="col-sm-12" id='preview' style="overflow:auto; max-height:300px;">
+                    </div>
+                </div> 
+                <script>
+				sendData();
+				</script>
+            </div>
+      	</div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Is Schedule?</label>
+            <div class="col-sm-1" style="margin-right:5px;">
+               <small>Date</small> <input class="form-control" id="scheduleDate" name="scheduleDate" type="text" maxlength="10" style="width:90px;" autocomplete="off" />
+            </div>
+            <div class="col-sm-6">
+               <small>Time</small> <input class="form-control time" id="scheduleTime" name="scheduleTime" type="text" value="" style="width:90px;" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Content
+            <div style="padding:20px 0 0 0;font-weight:bold;color:#FF0000;">
+            Replacement Tag For Site:<br />
+            RUPEES  - ##RS## <br />
+            </div>
+            <div style="padding:20px 0 0 0;font-size:17px;color:#666;">
+                e.g. सरकार ने राजेन्द्र को बहादुरी पुरूस्कार में <i class="fa fa-rupee"></i>20000 इनाम में दिए|
+            </div>
+            
+            <div style="color:#FF0000;margin-top:20px;">
+                <strong>Paste highlighted code "<u>YOUTUBE VIDEO EMBED URL</u>" in "<u>Source</u>" and change the your path "https://youtube.com/..."</strong><br />
+                <strong>e.g.:</strong> <small style="background-color:#F93; color:#000;padding:4px;">&lt;p&gt;&lt;iframe src="https://www.youtube.com/embed/MIAyW-y-CrU" frameborder="0" allowfullscreen="" style="width:669px; height:370px;"&gt;&lt;/p&gt;</small>
+            </div>
+            </label>
+                  
+            <div class="col-sm-9">
+            <?php
+            $oFCKeditor = new FCKeditor('content');
+            $oFCKeditor->BasePath = $this->baseUrl()."/public/fckeditor/";
+            $oFCKeditor->ToolbarSet = 'MyToolbar';
+            $oFCKeditor->Value = '';
+            $oFCKeditor->Create();
+            $oFCKeditor->Height = 900;
+            $oFCKeditor->Width = 700;
+            ?>
+            </div>
+        </div>
+        	
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3"><?php //echo $usertype;?>
+				  <button class="btn btn-primary" id="submit" onclick="return validate()">Submit</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+        </form>
+      </div><!-- panel -->
+      	<script>
+	  	function validate() {
+			var category = $('#category').val();
+			//var priority = $('#priority').val();
+			var city = $('#city').val(); 
+			var location_id = $('#location_id').val();
+			var headline = $('#headline').val();
+			var englishurl = $('#englishurl').val();
+			var intro = $('#intro').val();
+			var image = $('#image').val();
+			var idReporter = $('#idReporter').val();
+			var content = $('#content').val();
+			var scheduleDate = $('#scheduleDate').val();
+			var scheduleTime = $('#scheduleTime').val();
+			
+			//alert('content = '+ content);
+			
+			if($.trim(category) == '' || category == null){
+				alert('कृपया एक कैटगरी चुनें|');
+				$('#category').focus();
+				return (false);
+			}
+			if($.trim(city) == '' || city == null){
+				alert('कृपया कोई एक शहर चुनें|');
+				$('#city').focus();
+				return (false);
+			}
+			if($.trim(location_id) == '' || location_id == null){
+				alert('कृपया कोई एक प्रखंड चुनें|');
+				$('#location_id').focus();
+				return (false);
+			}
+			if($.trim(headline) == '' || headline == null){
+				alert('कृपया हेडलाइन भरें|');
+				$('#headline').focus();
+				return (false);
+			}
+			if($.trim(englishurl) == '' || englishurl == null){
+				alert('कृपया एन्लिश यू आर एल (URL) भरें|');
+				$('#englishurl').focus();
+				return (false);
+			}
+			if($.trim(intro) == '' || intro == null){
+				alert('कृपया इंट्रो भरें|');
+				$('#intro').focus();
+				return (false);
+			}
+			/*if($.trim(idReporter) == '' || intro == null){
+				alert('कृपया रिपोर्टर चुनें|');
+				$('#idReporter').focus();
+				return (false);
+			}*/
+			if($.trim(image) == '' || image == null){
+				alert('कृपया फोटो लगाएं|');
+				$('#image').focus();
+				return (false);
+			}
+			if ($.trim(scheduleDate) != '' && $.trim(scheduleTime) == ''){
+				alert('आप अपने पोस्ट का समय निश्चित करें|');
+				$('#scheduleTime').focus();
+				return (false);
+			}
+			if ($.trim(scheduleTime) != '' && $.trim(scheduleDate) == ''){
+				alert('आप अपने पोस्ट का तारीख निश्चित करें|');
+				$('#scheduleDate').focus();
+				return (false);
+			}
+			//if($.trim(content) == '' || content == null){
+			//	alert('कृपया कंटेंट भरें|');
+			//	$('#content').focus();
+			//	return (false);
+			//}
+		};
+	  	</script>

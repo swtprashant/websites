@@ -1,0 +1,34 @@
+<?php
+$host = $_SERVER['HTTP_HOST'];
+function GetBetween1($var1="",$var2="",$pool){
+	$temp1 = strpos($pool,$var1)+strlen($var1);
+	$result = substr($pool,$temp1,strlen($pool));
+	$dd=strpos($result,$var2);
+	if($dd == 0){
+		$dd = strlen($result);
+	}
+	return substr($result,0,$dd);
+}
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$GLOBALS['city'] = 'gaya';
+} else {
+	$GLOBALS['city'] = GetBetween("live",".","$host");
+}
+
+$GLOBALS['baseUrl'] = $this->baseUrl();
+?>
+	<!-- CATEGORY WISE NEWS -->
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Top News')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', "Don't Miss")?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'India')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'World')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Most Popular')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Sports')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Bollywood')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Business')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Lifestyle')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Tech')?>
+  <?php echo getMainBodyCategoryWisePost('Main Body On Page', 'Auto')?>
+  
+  <!-- / CATEGORY WISE NEWS -->
+  

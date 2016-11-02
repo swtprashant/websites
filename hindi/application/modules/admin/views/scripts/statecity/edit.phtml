@@ -1,0 +1,86 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Edit State,City & Block</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/statecity/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+          <form class="form-horizontal form-bordered" method="post" action="<?php echo $this->baseUrl();?>/admin/statecity/edit/id/<?php echo $this->data['location_id'];?>">
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Select State</label>
+              <div class="col-sm-5">
+                <select class="select2" id="state" name="state" data-placeholder="Choose a State..." required>
+                  <option value=""></option>
+                  <option value="bihar" <?php if( $this->data['city']='bihar'){echo 'selected';}?>>Bihar</option>
+                  <option value="jharkhand" <?php if( $this->data['city']='jharkhand'){echo 'selected';}?>>Jharkhand</option>
+                  <option value="uttar Pradesh" <?php if( $this->data['city']='uttar Pradesh'){echo 'selected';}?>>Uttar Pradesh</option>
+                  <option value="uttarakhand" <?php if( $this->data['city']='uttarakhand'){echo 'selected';}?>>Uttarakhand</option>
+                  <option value="rajasthan" <?php if( $this->data['city']='rajasthan'){echo 'selected';}?>>Rajasthan</option>
+                  </select>
+              </div>
+            </div>   
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Select City</label>
+              <div class="col-sm-5">
+                <select class="select2" id="city" name="city" data-placeholder="Choose a City..." required>
+                  <option value=""></option>
+                  <option value="alwar" <?php if( $this->data['city']='alwar'){echo 'selected';}?>>Alwar</option>
+                  <option value="basti" <?php if( $this->data['city']='basti'){echo 'selected';}?>>Basti</option>
+                  <option value="begusarai" <?php if( $this->data['city']='begusarai'){echo 'selected';}?>>Begusarai</option>
+                  <option value="dhanbad" <?php if( $this->data['city']='dhanbad'){echo 'selected';}?>>Dhanbad</option>
+                  <option value="giridih" <?php if( $this->data['city']='giridih'){echo 'selected';}?>>Giridih</option>
+                  <option value="gaya" <?php if( $this->data['city']='gaya'){echo 'selected';}?>>Gaya</option>
+                  <option value="palamu" <?php if( $this->data['city']='palamu'){echo 'selected';}?>>Palamu</option>
+                  <option value="ramgarh" <?php if( $this->data['city']='ramgarh'){echo 'selected';}?>>Ramgarh</option>
+                  <option value="santkabirnagar" <?php if( $this->data['city']='santkabirnagar'){echo 'selected';}?>>Santkabirnagar</option>
+                  <option value="siddharthnagar" <?php if( $this->data['city']='siddharthnagar'){echo 'selected';}?>>Siddharthnagar</option>
+                  <option value="tehri" <?php if( $this->data['city']='tehri'){echo 'selected';}?>>Tehri</option>  
+                  </select>
+              </div>
+            </div>   
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Block</label>
+              <div class="col-sm-7">
+                <textarea class="form-control" id="block[]" name="block[]" rows="5" required><?php echo $this->data['block_name'];?></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Sort</label>
+              <div class="col-sm-2">
+                <input type="text" name="sort" id="sort" value="<?php echo $this->data['sort'];?>"class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Status</label>
+              <div class="col-sm-2">
+                <select class="select2" id="status" name="status" data-placeholder="Status" required>
+                  <option value=""></option>
+                  <option value="1" <?php if( $this->data['status']='1'){echo 'selected';}?>>Active</option>
+                  <option value="0" <?php if( $this->data['status']='0'){echo 'selected';}?>>Inactive</option>
+                </select>
+              </div>
+            </div>  
+        	
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Update</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+        
+      </div><!-- panel -->

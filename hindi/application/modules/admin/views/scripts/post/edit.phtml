@@ -1,0 +1,580 @@
+<?php
+$_SESSION['timeout'] = 60;
+include_once('public/fckeditor/fckeditor.php');
+$city = $this->data['city'];
+$postid = $this->data['post_id'];
+
+$sql = "SELECT * FROM `post_category` WHERE `post_id` = '$postid'";
+//echo $sql;die(); 
+$res = Zend_Registry::get("db")->fetchAll($sql);
+
+$objMeta = new Default_Model_DbTable_Category();
+//$adminMetaVals = $objMeta->getMetaKeyVal($pid);
+$category = $objMeta->getMetaKeyVal($postid);
+$special = explode(',',$category);
+//print_r($special);die();
+
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+
+$recods = $obj->getAdminByUser($adminsession->username);
+$city = $recods['city'];
+$usertype = $recods['user_type'];
+
+function selectedCatgories($post_id, $category_id){
+	if ($post_id != ''){
+		$category_name = '';
+		$sql = "";
+		$sql = "SELECT category_name FROM `post_category` WHERE `post_id` = '".$post_id."' AND category_id = ".$category_id;
+		//echo $sql; 
+		$rsCat = Zend_Registry::get("db")->fetchAll($sql);	
+		if($rsCat){ foreach($rsCat as $resCat){
+			$category_name = $resCat['category_name'];
+		}}
+		return $category_name;
+	}
+}
+?>
+
+	<script type="text/javascript">
+	$(document).ready(function() {
+			$("#city").change(function() {
+			//alert($(this).val());
+			url = '<?php echo $this->baseUrl();?>/admin/post/ajaxcall?city='+$(this).val();
+			//alert(url);
+			$.get(url, function(data) {
+				$("#location_id").html(data);
+			});
+		});
+
+	});
+	function getPrakhand(location_Id) {
+		//$("#city").val();
+		//alert('location_Id = ' + location_Id);
+		//alert('pid = ' + $('#pid').val());
+		//$('#location_id1').hide();
+			
+		url = '<?php echo $this->baseUrl();?>/admin/post/ajaxcall?city='+$("#city").val()+'&pid='+$("#pid").val()+'&location_Id='+location_Id;
+		//alert(url);
+		$.get(url, function(data) {
+			//$("#spnBlock").html(data);
+			$("#location_id").html(data);
+		});
+	}
+	</script>
+
+	<!-- DATE PICKER -->
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+	<!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery-ui.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.js"></script>
+    <link href="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.css" rel="stylesheet" />
+    <script>
+	$(function() {
+    	$( "#scheduleDate" ).datepicker({ 
+			minDate: -0, 
+			maxDate: "+10D", 
+			dateFormat: 'yy-m-d'
+         });
+  	
+		$('#scheduleTime').timepicker();
+    });
+    </script>
+    <!-- / DATE PICKER -->
+
+	<!-- / PHOTO PREVIEW -->
+    <script type="text/javascript">//<![CDATA[ 
+        $(window).load(function () {
+            function readPhotoURL(input) {
+                //alert(input.files[0].size);
+                if (input.files[0].size > 2097152) {
+                    alert('Please photo image size maximum 2mb only');
+                    $("#image").val('');
+					//$('#imgPhoto').hide();
+                    return (false);
+                }
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    $('#image').show();
+                    reader.onload = function (e) {
+						$('#imgPhoto').show();
+                        $('#imgPhoto').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image").change(function () {
+                var imgName = $("#image").val();
+                var sptImgName;
+                var extImageName;
+                if ($.browser.mozilla == false) {
+                    sptImgName = imgName.split("\\");
+                    extImageName = sptImgName[2].split('.');
+
+                } else {
+                    sptImgName = imgName;
+                    extImageName = sptImgName.split('.');
+                }
+
+                var getExt = extImageName[1];
+                if (getExt != 'jpg' && getExt != 'jpeg') {
+                    alert('Please upload JPG, JPEG file in Photo of the post.');
+                    $('#image').val('');
+					//$('#imgPhoto').hide();
+                    return (false);
+                } //else { //$('#imgPhoto').show(); }
+
+                if ($.browser.chrome || $.browser.mozilla) {
+                    readPhotoURL(this);
+                } else if ($.browser.msie) {
+                    $('#imgPhoto').show();
+                    document.getElementById('imgPhoto').src = $("#txtphoto").val();
+                }
+            });
+        });//]]>  
+    </script>
+    <!-- / PHOTO PREVIEW -->
+<?php
+$GLOBALS['baseUrl'] = $this->baseUrl();	
+
+$headline = '';
+if(!empty($_POST['headline'])) {
+	$headline = $_POST['headline'];	
+} else {
+	$headline = $this->data['headline'];
+}
+
+$intro = '';
+if(!empty($_POST['intro'])) {
+	$intro = $_POST['intro'];	
+} else {
+	$intro = $this->data['intro'];
+}
+
+$category = '';
+if(!empty($_POST['category'])) {
+	$category = $_POST['category'];	
+} else {
+	//$category = $this->data['category'];
+}
+
+$englishurl = '';
+if(!empty($_POST['englishurl'])) {
+	$englishurl = $_POST['englishurl'];	
+} else {
+	$englishurl = $this->data['english_url'];
+}
+
+$content = '';
+if(!empty($_POST['content'])) {
+	$content = $_POST['content'];	
+} else {
+	$content = $this->data['content'];
+}
+
+$content1 = '';
+if(!empty($_POST['content1'])) {
+	$content1 = $_POST['content1'];	
+} else {
+	$content1 = $this->data['content1'];
+}
+
+$priority = '';
+if(!empty($_POST['priority'])) {
+	$priority = $_POST['priority'];	
+} else {
+	$priority = $this->data['priority'];
+}
+
+$sectionpriority = '';
+if(!empty($_POST['sectionpriority'])) {
+	$sectionpriority = $_POST['sectionpriority'];	
+} else {
+	$sectionpriority = $this->data['sectionpriority'];
+}
+
+$postType = '';
+if(!empty($_POST['postType'])) {
+	$postType = $_POST['postType'];	
+} else {
+	$postType = $this->data['postType'];
+}
+
+$metatitle = '';
+if(!empty($_POST['metatitle'])) {
+	$metatitle = $_POST['metatitle'];	
+} else {
+	$metatitle = $this->data['meta_title'];
+}
+
+$metakeyword = '';
+if(!empty($_POST['metakeyword'])) {
+	$metakeyword = $_POST['metakeyword'];	
+} else {
+	$metakeyword = $this->data['meta_keyword'];
+}
+
+$metadescription = '';
+if(!empty($_POST['metadescription'])) {
+	$metadescription = $_POST['metadescription'];	
+} else {
+	$metadescription = $this->data['meta_desc'];
+}
+
+$videoURL = '';
+if(!empty($_POST['videoURL'])) {
+	$videoURL = $_POST['videoURL'];	
+} else {
+	$videoURL = $this->data['videourl'];
+}
+
+$idReporter = '';
+if(!empty($_POST['idReporter'])) {
+	$idReporter = $_POST['idReporter'];	
+} else {
+	$idReporter = $this->data['idReporter'];
+}
+
+$scheduleDate  = '';
+if(!empty($_POST['scheduleDate'])) {
+	$scheduleDate = $_POST['scheduleDate'];	
+} else {
+	$scheduleDate = $this->data['scheduleDate'];
+}
+
+$scheduleTime = '';
+if(!empty($_POST['scheduleTime'])) {
+	$scheduleTime = $_POST['scheduleTime'];	
+} else {
+	$scheduleTime = $this->data['scheduleTime'];
+}
+$Beauro = '';
+if(!empty($_POST['Beauro'])) {
+	$Beauro = $_POST['Beauro'];	
+} else {
+	$Beauro = $this->data['user_id'];
+}
+?>
+
+<div class="pageheader">
+    <h2><i class="fa fa-home"></i>Edit Post</h2>
+    <div class="breadcrumb-wrapper">
+    	<ol class="breadcrumb">
+    		<li><a href="<?php echo $this->baseUrl();?>/admin/post/"><strong>Back</strong></a></li>
+    	</ol>
+    </div>
+</div>
+<form name="frmpost" id="frmpost" enctype="multipart/form-data" method="post" action="<?php echo $this->baseUrl();?>/admin/post/edit/id/<?php echo $this->data['post_id'];?>">
+<div class="contentpanel">
+	<div class="panel panel-default">
+		<div class="panel-body panel-body-nopadding">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Headline</label>
+                <div class="col-sm-9">
+                    <input type="text" placeholder="Enter Headline" id="headline" name="headline" value="<?php echo $headline;?>" class="form-control" maxlength="75"  />
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['headline'])){ echo $this->error['headline'];}?></span></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Intro</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" id="intro" name="intro" rows="5" ><?php echo $intro;?></textarea>
+                </div>
+                <div class="error_container"><span class="error"><?php if(!empty($this->error['intro'])){ echo $this->error['intro'];}?></span></div>
+            </div>
+            <div class="form-group">
+             	<label class="col-sm-3 control-label">Category</label>
+                <div class="col-sm-9">
+                    <?php 
+                    $query = "SELECT * FROM `category` WHERE status = '1' ORDER BY category";
+                    $res = Zend_Registry::get("db")->fetchAll($query);
+                    ?>
+                    <select class="select2" name="category[]" id="category" multiple="multiple"  size="6" required>
+                        <?php
+                        if($res){ 
+                            foreach($res as $catVal)
+                            { 
+                                if (selectedCatgories($postid, $catVal['category_id']) == $catVal['category']){
+                                    echo '<option selected="selected" value="'.$catVal['category_id'].'">'.$catVal['category'].'</option>';
+                                } else {
+                                    echo '<option value="'.$catVal['category_id'].'">'.$catVal['category'].'</option>';
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['category'])){ echo $this->error['category'];}?></span></div>
+                </div>
+            </div>
+			<div class="form-group">
+                <label class="col-sm-3 control-label" for="disabledinput">Post Image</label>
+                <div class="col-sm-9">
+                    <input type="hidden" name="imageOld" value="<?php echo $this->data['image']; ?>" />
+                    <input type="file" name="image" id="image" class="form-control"  />
+                    <div style="color:#FF0000;">width:1000px, Height:450px</div>
+                    <span id="lblError2" style="color: red;"></span>
+                    <?php //if($this->data['thumb_image'] != "") { ?>
+                    <!--<img src="<?php //echo $this->baseUrl().'/public/products/image/thumb/'.$this->data['thumb_image']; ?>" width="50" align="absmiddle" />--><?php //echo $this->data['thumbImagePath']; ?>
+                    <!--<img id="imgPhoto" src="<?php //echo $this->baseUrl();?>/public/admin/images/Blank.png" style="display:none;height:100px;width:150px;">-->
+                    <img id="imgPhoto" src="<?php echo $this->baseUrl().'/public/products/image/'.$this->data['thumb_image']; ?>" style="width:150px;" />
+					<?php //} ?>
+					<div class="error_container"><span class="error"><?php if(!empty($this->error['image'])){ echo $this->error['image'];}?></span></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">English URL</label>
+                <div class="col-sm-9">
+                    <input type="text" placeholder="Enter English URL" id="englishurl" name="englishurl" value="<?php echo $englishurl;?>" class="form-control" maxlength="62"  />
+					<div class="error_container"><span class="error"><?php if(!empty($this->error['englishurl'])){ echo $this->error['englishurl'];}?></span></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Content
+                    <div style="padding:20px 0 0 0;font-weight:bold;color:#FF0000;">
+                    Replacement Tag For Site:<br />
+                    RUPEES  - ##RS## <br />
+                    </div>
+                    <div style="padding:20px 0 0 0;font-size:17px;color:#666;">
+                        e.g. सरकार ने राजेन्द्र को बहादुरी पुरूस्कार में <i class="fa fa-rupee"></i>20000 इनाम में दिए|
+                    </div>
+                    <div style="color:#FF0000;margin-top:20px;">
+                        <strong>Paste highlighted code "<u>YOUTUBE VIDEO EMBED URL</u>" in "<u>Source</u>" and change the your path "https://youtube.com/..."</strong><br />
+                        <strong>e.g.:</strong> <small style="background-color:#F93; color:#000;padding:4px;">&lt;p&gt;&lt;iframe src="https://www.youtube.com/embed/MIAyW-y-CrU" frameborder="0" allowfullscreen="" style="width:100%; height:500px;"&gt;&lt;/iframe&gt;&lt;/p&gt;</small>
+                    </div>
+                </label>
+              
+                <div class="col-sm-9">
+                    <?php
+                    $oFCKeditor = new FCKeditor('content');
+                    $oFCKeditor->BasePath = $this->baseUrl()."/public/fckeditor/";
+                    $oFCKeditor->ToolbarSet = 'MyToolbar';
+                	$oFCKeditor->Value = $content;
+                    $oFCKeditor->Create();
+                    $oFCKeditor->Height = 900;
+                    $oFCKeditor->Width = 700;
+                    ?>
+					<div class="error_container"><span class="error"><?php if(!empty($this->error['content'])){ echo $this->error['content'];}?></span></div>
+                </div>
+            </div>
+            <div class="form-group">
+                    <label class="col-sm-3 control-label">Final Content</label>
+                    <div class="col-sm-9">
+                        <?php
+                        $oFCKeditor = new FCKeditor('content1');
+                        $oFCKeditor->BasePath = $this->baseUrl()."/public/fckeditor/";
+                        $oFCKeditor->ToolbarSet = 'MyToolbar';
+						$oFCKeditor->ToolbarLocation = 'None' ; 
+						$oFCKeditor->Value = $content1;
+                        $oFCKeditor->Create();
+                        $oFCKeditor->Height = 400;
+                        $oFCKeditor->Width = 700;
+                        ?>
+                        <div class="error_container"><span class="error"><?php if(!empty($this->error['content1'])){ echo $this->error['content1'];}?></span></div>
+               		</div>
+                </div>
+            <?php
+            if($usertype != 2){
+            ?>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Banner Priority</label>
+                    <div class="col-sm-2">
+                        <select class="select2" id="priority" name="priority">
+                            <option value="">Select a priority</option>
+                            <?php 
+                            for ($i=1; $i<=5; $i++){
+                                if( $priority == $i){
+                                    echo '<option selected="selected" value="'.$i.'">'.$i.'</option>';
+                                } else {
+                                    echo '<option value="'.$i.'">'.$i.'</option>';
+                                }
+                            }
+                            ?>                 
+                        </select>
+						<div class="error_container"><span class="error"><?php if(!empty($this->error['priority'])){ echo $this->error['priority'];}?></span></div>
+                    </div>
+                </div>
+            <?php }?>  
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Sections Priority</label>
+                <div class="col-sm-2">
+                    <select class="select2" id="sectionpriority" name="sectionpriority">
+                        <option value="">Select a priority</option>
+                        <?php 
+                        for ($i=1; $i<=6; $i++){
+                            if( $sectionpriority == $i){
+                                echo '<option selected="selected" value="'.$i.'">'.$i.'</option>';
+                            } else {
+                                echo '<option value="'.$i.'">'.$i.'</option>';
+                            }
+                        }
+                        ?>                 
+                    </select>
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['priority'])){ echo $this->error['priority'];}?></span></div>
+                </div>
+            </div>   
+            <?php
+			if($usertype != 2){
+			?>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">Headline Type</label>
+                  <div class="col-sm-2">
+                    <select name="postType" id="postType" class="select2">
+                        <option value="">Select</option>
+                        <option value="BREAKING" <?php if ($postType == 'BREAKING'){ echo 'selected';}?>>BREAKING</option>
+                        <option value="EXCLUSIVE" <?php if ($postType == 'EXCLUSIVE'){ echo 'selected';}?>>EXCLUSIVE</option>
+                        <option value="FLASH" <?php if ($postType == 'FLASH'){ echo 'selected';}?>>FLASH</option>
+                        <option value="STING OPERATION" <?php if ($postType == 'STING OPERATION'){ echo 'selected';}?>>STING OPERATION</option>
+                    </select>
+                  </div>
+                </div>
+            <?php
+			} else {
+				echo '<input type="hidden" name="postType">';	
+			}
+			?>
+			<?php
+            if($usertype != 2){
+            ?>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Meta Title</label>
+                    <div class="col-sm-9">
+                        <input type="text" placeholder="Enter Meta title" id="metatitle" name="metatitle" value="<?php echo $metatitle;?>" class="form-control" maxlength="62"  />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Meta Keyword</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="metakeyword" name="metakeyword" rows="5" ><?php echo $metakeyword;?></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Meta Description</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="metadescription" name="metadescription" rows="5" ><?php echo $metadescription;?></textarea>
+                    </div>
+                </div>
+            <?php }else{?>
+            	<div class="form-group">
+                    <label class="col-sm-3 control-label">Meta Title</label>
+                    <div class="col-sm-6">
+                        <input type="hidden" id="metatitle" name="metatitle" />
+                    	<input type="hidden" id="metakeyword" name="metakeyword" />
+                    	<input type="hidden" id="metadescription" name="metadescription" />
+                        <input type="hidden" id="priority" name="priority" />
+                        <input type="hidden" id="scheduleDate" name="scheduleDate" />
+                        <input type="hidden" id="scheduleTime" name="scheduleTime" />
+                    </div>
+                </div>
+          	<?php
+			}
+			?>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Video URL
+                <div style="color:#FF0000;">
+                    Paste "<u>YOUTUBE / VIMEO</u>" Video IFRAME Embed URL only
+                </div>
+                </label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" name="videoURL" id="videoURL" value="<?php echo $videoURL;?>" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Reporter</label>
+                <div class="col-sm-3">
+                    <?php 
+                    $query = "SELECT user_id AS idReporter, CONCAT(first_name, ' ', last_name) AS reporterName FROM `user` WHERE user_type = 2";
+                    $res = Zend_Registry::get("db")->fetchAll($query);
+                    ?>
+                        <select class="select2" id="idReporter" name="idReporter">
+                        <option value="">Select</option>
+                        <?php if($res){ foreach($res as $val){ 
+								if( strtolower($idReporter) ==  strtolower($val['idReporter'])){
+									echo '<option selected value="'.$val['idReporter'].'">'.$val['reporterName'].'</option>';
+								} else {
+									echo '<option value="'.$val['idReporter'].'">'.$val['reporterName'].'</option>';
+								}
+						?>
+                       <?php }}?>
+                        </select>
+                  </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Beauro</label>
+              <div class="col-sm-2">
+                <select name="Beauro" id="Beauro" class="select2">
+                    <option value="">Select</option>
+                    <option value="0" <?php if ($Beauro == '0'){ echo 'selected';}?>>Live India</option>
+                </select>
+              </div>
+            </div> 
+            <?php
+            if($usertype != 2){
+            ?>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Is Schedule?</label>
+                    <div class="col-sm-1" style="margin-right:5px;">
+                       <small>Date</small> <input class="form-control" id="scheduleDate" name="scheduleDate" type="text" value="<?php echo $scheduleDate; ?>" maxlength="10" style="width:90px;" autocomplete="off" />
+                    </div>
+                    <div class="col-sm-7">
+                       <small>Time</small> <input class="form-control time" id="scheduleTime" name="scheduleTime" type="text" value="<?php echo $scheduleTime; ?>" style="width:90px;" />
+                    </div>
+                </div>
+            <?php
+			}
+			?>
+            <div class="form-group">
+                <div class="col-sm-12" align="center">
+                	<?php if ($this->data['idReporter'] == $this->data['user_id']){
+                    	$userId_reprterId_Is_Same = "YES";
+					} else {
+						$userId_reprterId_Is_Same = "NO";
+					}?>
+                    <input type="hidden" name="userId_reprterId_Is_Same" id="userId_reprterId_Is_Same" value="<?php echo $userId_reprterId_Is_Same;?>" />                    
+                    <input type="hidden" name="pid" id="pid" value="<?php echo $this->data['post_id'];?>" />
+                    <button class="btn btn-primary" id="submit" onclick="return validate()">Update</button>
+                    <button class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+</form>	
+</div><!-- panel -->
+<script>
+function validate() {
+	var headline = $('#headline').val();
+	var intro = $('#intro').val();
+	var category = $('#category').val();
+	var image = $('#image').val();
+	var content = $('#content').val();
+	
+	//alert(content);
+	
+	if($.trim(headline) == '' && headline == null){
+		alert('Please  enter headline');
+		$('#headline').focus();
+		return (false);
+	}
+	if($.trim(intro) == '' && intro == null){
+		alert('Please enter intro');
+		$('#intro').focus();
+		return (false);
+	}
+	if($.trim(category) == '' && category == null){
+		alert('कृपया एक कैटगरी चुनें|');
+		$('#category').focus();
+		return (false);
+	}
+	if($.trim(image) == '' && image == null){
+		alert('Please browse post image');
+		$('#image').focus();
+		return (false);
+	}
+	if($.trim(content) == '' && content == null){
+		alert('Please enter content');
+		$('#content').focus();
+		return (false);
+	}
+};
+</script> 

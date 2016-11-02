@@ -1,0 +1,69 @@
+<?php
+$GLOBALS['baseUrl'] = $this->baseUrl();
+
+$strCategoryName = explode("/", $_SERVER['REQUEST_URI']);
+$category_id = $strCategoryName[4];
+//echo $category_id;
+?>
+<div class="cp-news-grid-style-4">
+    <?php
+	if($this->data)
+	{
+	?>
+        <div class="section-title pink-border">
+            <h2 class="textpink"><?php echo getCatName($category_id);?></h2>
+        </div>
+        <div class="cp-news-grid-style-3">
+            <div class="grid-holder">
+                <div class="row">
+                    <ul class="cp-load-newsgrid">
+                        <?php
+                        foreach($this->data as $rsTempVal)
+                        {
+                        ?>
+                            <li class="col-md-6 col-sm-6 cp-news-post">
+                                <div class="cp-thumb">
+                                <?php $p1 = getcwd().'/public/products/image/'.$rsTempVal['image'];?>
+                                <a href="<?php echo $GLOBALS['baseUrl'].'/postdetail/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>">
+                                <?php if(file_exists($p1)){?>
+                                    <img src="<?php echo $GLOBALS['baseUrl'].'/public/products/image/thumb/'.$rsTempVal['image'];?>" alt="<?php echo insertReplacementTag($rsTempVal['headline']);?>" title="<?php echo insertReplacementTag($rsTempVal['headline']);?>" />
+                                <?php } else {?>
+                                    <img src="<?php echo $GLOBALS['baseUrl'];?>/public/images/comingsoon.jpg" alt="<?php echo insertReplacementTag($rsTempVal['headline']);?>" title="<?php echo insertReplacementTag($rsTempVal['headline']);?>" />
+                                <?php }?>	
+                                </a>
+                                </div>
+                                <h3><a href="<?php echo $GLOBALS['baseUrl'].'/postdetail/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>"><?=$rsTempVal['headline'];?></a></h3>
+                                <p><?php echo $rsTempVal['intro'];?></p>
+                                
+                                <!-- SHARE IT -->
+                                <div>
+                                    <span class='st_facebook_large' st_url="http://<?php echo $_SERVER['HTTP_HOST']?>/<?php echo $this->baseUrl().'/viewpost/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>" st_title="<?php echo $rsTempVal['headline'];?>"></span>
+                                    <span class='st_twitter_large' st_url="http://<?php echo $_SERVER['HTTP_HOST']?>/<?php echo $this->baseUrl().'/viewpost/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>" st_title="<?php echo $rsTempVal['headline'];?>"></span>
+                                    <span class='st_googleplus_large' st_url="http://<?php echo $_SERVER['HTTP_HOST']?>/<?php echo $this->baseUrl().'/viewpost/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>" st_title="<?php echo $rsTempVal['headline'];?>"></span>
+                                    <span class='st_whatsapp_large' st_url="http://<?php echo $_SERVER['HTTP_HOST']?>/<?php echo $this->baseUrl().'/viewpost/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>" st_title="<?php echo $rsTempVal['headline'];?>"></span>
+                                </div>
+                                <!-- / SHARE IT -->
+                            </li>
+                        <?php
+                        }
+                        ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- PAGINATION -->
+        <div class="form-group">
+        	<div class="col-12">
+            	<?php 
+                echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+                ?>
+            </div>
+        </div>
+        <!-- / PAGINATION -->
+<?php
+	}
+?>
+</div>
+
+      
+		

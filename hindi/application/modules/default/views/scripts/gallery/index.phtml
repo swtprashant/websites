@@ -1,0 +1,159 @@
+<?php
+$GLOBALS['baseUrl'] = $this->baseUrl();
+
+$strIdGallery = explode("/", $_SERVER['REQUEST_URI']);
+
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$idgallery = $strIdGallery[5];
+} else {
+	$idgallery = $strIdGallery[4];
+}
+//echo $idgallery;
+?>
+<div class="cp-news-grid-style-4 mb20">
+    <div class="section-title pink-border">
+        <h2>Gallery</h2>
+        <small></small> 
+    </div>
+
+<?php
+	echo getSliderGallery($idgallery);
+
+	if($this->data)
+	{
+?>
+		<div class="section-title pink-border m20">
+            <h2>Gallery List</h2>
+            <small></small> 
+        </div>
+        <div class="cp-news-grid-style-3">
+			<div class="grid-holder">
+				<div class="row">
+					<ul class="cp-load-newsgrid">
+						<?php
+						foreach($this->data as $rsTempVal)
+						{
+						?>
+							<li class="col-md-4 col-sm-4 cp-news-post mb5">
+								<div class="cp-thumb">
+                                <a href="<?php echo $rsTempVal['link'];?>">
+                                <img src="<?php echo $rsTempVal['imagepath'];?>" alt="<?php echo insertReplacementTag($rsTempVal['title']);?>" title="<?php echo insertReplacementTag($rsTempVal['title']);?>" />
+								</a>
+								</div>
+								<div style="background-color:#EFEFEF; border:1px #CCC solid; padding:5px;">
+									<h3 class="h3-min-height text17">
+									<a href="<?php echo $rsTempVal['link'];?>"><?=$rsTempVal['title'];?></a></h3>
+									<div class="floatright text11"><a href="<?php echo $rsTempVal['link'];?>" class="textpink">more...</a></div>
+									<div class="text11 textblue" style="margin-top:20px; padding:5px; background-color:#CCC;">By Live India <?php //echo $rsTempVal['user_name'];?></div>
+								</div>
+							</li>
+						<?php
+						}
+						?>
+					</ul>
+				</div>
+			</div>
+		</div>
+	
+		<!-- PAGINATION -->
+		<div class="form-group">
+			<div class="col-12">
+				<?php 
+				echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+				?>
+			</div>
+		</div>
+		<!-- / PAGINATION -->
+<?php
+	}
+?>
+</div>
+
+<?php
+function getSliderGallery($idgallery)
+{
+	if(!empty($idgallery))
+	{
+		$mySQL = "";
+		$mySQL .= "SELECT GI.idgallery, GI.title, CONCAT('http://".$_SERVER['HTTP_HOST'].$GLOBALS['baseUrl']."','/public/gallery/', GI.image) AS imagepath";
+		//$mySQL .= ", CONCAT('http://".$_SERVER['HTTP_HOST'].$GLOBALS['baseUrl']."','/gallery/index/id/', GI.idgallery, '/', GI.englishurl) AS link";
+		$mySQL .= " FROM galleryimage GI WHERE GI.idgallery = '".$idgallery."'";
+		//echo $mySQL;
+		//exit;
+		$rsTemp = Zend_Registry::get("db")->fetchAll($mySQL);
+		
+		if($rsTemp)
+		{
+?>
+            <div class="cp-single-post1">
+                <style>
+                #ms-gallery-1{max-width: 100%;margin:0 auto;}
+                </style>
+                <script type="text/javascript">		
+                $(document).ready(function(){
+                    var slider = new MasterSlider();
+                        slider.setup('masterslider' , {
+                        width:750,
+                        height:355,
+                        space:10,
+                        preload:3,
+                        view:'basic',
+                        autoplay:false,
+                    });
+                    slider.control('arrows');	
+                
+                    var gallery = new MSGallery('ms-gallery-1' , slider);
+                    gallery.setup();
+                });
+                </script>
+                <div class="ms-gallery-template" id="ms-gallery-1"> 
+                    <!-- masterslider -->
+                    <div class="master-slider ms-skin-black-2 round-skin" id="masterslider">
+                        <?php
+                        foreach($rsTemp as $rsData)
+                        {
+                        ?>
+                            <div class="ms-slide"> 
+                                <img src="../ms/blank.gif" data-src="<?php echo $rsData['imagepath'];?>" alt="<?php echo $rsData['title'];?>" /> 
+                                <img src="<?php echo $rsData['imagepath'];?>" style="width:180px;height:100px;" alt="<?php echo $rsData['title'];?>" id="adsimg" class="ms-thumb" />
+                                <div class="ms-info text15"><?php echo trim($rsData['title']);?></div>
+                            </div>
+                        <?php
+                        }
+                        ?>
+                        <?php
+                        /*
+                        <!--<div class="ms-slide"> 
+                        <img src="../ms/blank.gif" data-src="<?php //echo $GLOBALS['baseUrl'];?>/public/post/images/img_20151218084757.jpg" alt="फितूर में फंसी कैटरीना" /> 
+                        <a href="http://player.vimeo.com/video/53914149" data-type="video"> vimeo video </a> 
+                        <img src="<?php //echo $GLOBALS['baseUrl'];?>/public/post/images/img_20151218084757.jpg" alt="thumb-4" class="ms-thumb"/>
+                        <div class="ms-info text14">अर्शी-अफरीदी का सैक्स स्कैंडल</div>
+                        <--<h5 class="ms-layer video-title video-top-title" style="left:243px; top:29px "
+                            data-effect="left(150)"
+                            data-duration="3500"
+                            data-ease="easeOutExpo"
+                            data-delay="50"
+                            >DIRECTOR’S CUT</h5>
+                        <h4 class="ms-layer video-title" style="left:240px; top:44px "
+                            data-effect="front(500)"
+                            data-duration="5000"
+                            data-ease="easeOutExpo"
+                            data-delay="400"
+                            >CHEETAHS ON THE EDGE</h4>
+                        <h5 class="ms-layer video-title video-sub-title" style="left:240px; top:90px "
+                            data-effect="right(50)"
+                            data-duration="3500"
+                            data-ease="easeOutExpo"
+                            data-delay="1000"
+                            >Groundbreaking footage of the world’s fastest runner</h5>--
+                        </div>-->
+                        */
+                        ?>
+                    </div>
+                </div>
+            </div>
+<?php
+		}
+	}
+}
+?>

@@ -1,0 +1,121 @@
+<script type="text/javascript">
+	function deletePost(id){
+		var iAgree = confirm("You are sure want to delete?.")
+		if (iAgree == true){
+			document.location.href="<?php echo $this->baseUrl();?>/admin/user/delete/id/" + id;
+			return(true);
+		} else {
+			return (false);
+		}
+	}
+</script>
+<div class="pageheader">
+    <h2><i class="fa fa-home"></i>Manage Users</h2>
+    <div class="breadcrumb-wrapper">
+        <ol class="breadcrumb">
+            <li><a href="<?php echo $this->baseUrl();?>/admin/user/add"><strong>+ Add</strong></a></li>
+        </ol>
+    </div>
+</div>
+<div class="contentpanel">
+    <form name="filter" id="filter" action="" method="post">
+    <div class="row">
+    	<div class="col-sm-12" style="background-color:#1d2939; color:#FFF; margin-bottom:15px;">
+        	<h5>SEARCH BY:</h5></div>
+    	<div class="tab-content" style="background-color:#D3D7DB; margin-bottom:0px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Keyword</label>
+                <div class="col-sm-4">
+                    <input placeholder="Enter Name Keyword" class="form-control input-sm mb15" name="keyword" id="keyword" value=""  type="text">	 
+                    <input type="submit" name="search" class="button2" value="Search" />
+                    <!--<button class="btn btn-primary btn-block" name="create_lead">Search</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+    
+<div class="info_container"><span class="info_text">
+	<?php if(!empty($this->messages[0])){ echo $this->messages[0];}?>
+	</span>
+</div> 
+
+<div class="contentpanel">
+	<div class="row">
+    	<div class="col-md-12">
+        	<form name="frmuser" id="frmuser" method="post" action="<?php echo $this->baseUrl();?>/admin/user/add">
+           		<table class="table table-success mb30">
+                    <thead>
+                    <tr>
+                    	<th>#</th>
+                    	<th>Name</th>
+                    	<th>Email</th>
+                    	<th>City</th>
+                    	<th>Status</th>
+                    	<th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php 
+					if($this->data){
+					  	$i = 0;
+					  	foreach($this->data as $data){
+							if($data['active'] == 1){
+								$stat =	'<i class="fa fa-check-square-o textgreen" title="Active"></i>'; 
+								//$stat = "<img src='".$this->baseUrl()."/public/admin/images/green_icon.png' width='12' height='12' alt='Activated' border='0' title='Activated'/>";
+							}else{
+								$stat =	'<i class="fa fa-square-o textred" title="Inactive"></i>'; 
+								//$stat = "<img src='".$this->baseUrl()."/public/admin/images/red_icon.png' width='12' height='12' alt='Inactivated' border='0' title='Inactivated'/>";
+							}
+					?>
+                    		<tr>
+                        		<td><?php $i++; echo $i;?>.</td>
+                        		<td><?php echo $data['first_name']."  ".$data['last_name'];?></td>
+                       			<td><a href="mailto:<?php echo $data['email'];?>" ><?php echo $data['email'];?></a></td>
+                       			<td><?php echo $data['city'];?></td>
+                       			<td><a href="<?php echo $this->baseUrl();?>/admin/user/active/id/<?php echo $data['user_id'];?>" title="status"><?php echo $stat;?></a></td>
+                       			<td><!--<a href="#" title="view"><i class="fa fa-search"></i></a>&nbsp;&nbsp;-->
+                       			<a href="<?php echo $this->baseUrl();?>/admin/user/edit/id/<?php echo $data['user_id'];?>" title="Edit"><i class="fa fa-edit textblue"></i>
+                       			<a href="javascript:void(0)" onclick="deletePost('<?php echo $data['user_id'];?>')" id="delPost" title="Delete This?"><i class="fa fa-trash-o textred"></i></a>
+                       			</td>
+                      		</tr>
+                   <?php } }?>  
+                   </tbody>
+           		</table>
+               	<!-- PAGINATION -->
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td height="10">
+                        <?php 
+                        //echo 'I am here ' . count($this->data);
+                        //echo $this->pageCount;
+                        echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+                        ?>
+                        </td>
+                    </tr>
+                </table>
+                <!-- / PAGINATION -->
+        	</form>
+     	</div>
+   	</div>
+</div>
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

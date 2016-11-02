@@ -1,0 +1,132 @@
+<?php
+$adminsession = new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+?>
+<script src="<?php echo $this->baseUrl();?>/public/js/jquery.min.js"></script>
+<script>
+function manageTags(id)
+{
+	//alert('I am here..');
+	var post_id = id;
+	var meta_title = $('#meta_title_'+ id).val();
+	var meta_keyword = $('#meta_keyword_' + id).val();
+	var meta_desc = $('#meta_desc_' + id).val();
+		
+	var dataString = 'post_id='+post_id+'&meta_title='+meta_title+'&meta_keyword='+meta_keyword+'&meta_desc='+meta_desc;
+	url = '<?php echo $this->baseUrl();?>/admin/metacontent/ajaxcall?'+dataString;
+	//alert(url);
+	$('#result_' + id).show();
+	$.get(url, function(data) {
+		$('#result_' + id).html(data);
+		$('#result_' + id).hide(5000);
+	});
+};
+</script>
+<div class="pageheader">
+	<h2><i class="fa fa-home"></i>Manage Meta Keywords & Descriptions</h2>
+	<div class="breadcrumb-wrapper">
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->baseUrl();?>/admin/post/add"><strong>+ Add Post</strong></a></li>
+		</ol>
+	</div>
+</div>
+    
+<div class="contentpanel">
+	<form name="filter" id="filter" action="" method="post">
+        <div class="row">
+            <div class="col-sm-12" style="background-color:#1d2939; color:#FFF; margin-bottom:15px;"><h5>SEARCH BY:</h5>
+        </div>
+        <div class="tab-content" style="background-color:#D3D7DB; margin-bottom:0px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Keyword</label>
+                <div class="col-sm-4">
+                    <input placeholder="Enter Name Keyword" class="form-control input-sm mb15" name="keyword" id="keyword" value=""  type="text">	 
+                    <input type="submit" name="search" class="button2" value="Search" />
+                    <!--<button class="btn btn-primary btn-block" name="create_lead">Search</button>-->
+                </div>
+            </div>
+        </div>
+	</form>
+</div>
+<div class="info_container">
+	<span class="info_text">
+		<?php if(!empty($this->messages[0])){ echo $this->messages[0];}?>
+	</span>
+</div>   
+<div class="contentpanel">
+	<div class="row">
+    	<div class="col-md-12">
+           	<table class="table table-success mb30">
+                <thead>
+                	<tr>
+                        <th width="20">#</th>
+                        <th width="81">Title <div><small style="font-size:10px; color:#FFF;">Title max. 65 characters</small></div></th>
+                        <th width="81">Meta Keywords <div><small style="font-size:10px; color:#FFF;">Keywords only 10 words and max. 160 characters</small></div></th>
+                        <th width="96">Meta Description <div><small style="font-size:10px; color:#FFF;">Description phrase max. 23 & max. 165 characters</small></div></th>
+                        <th width="43">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                $i = 0;
+                if($this->data)
+				{
+					$j = 1;
+					foreach($this->data as $val)
+					{
+						if ($j % 2) { 
+							$bgcolor = "#EFEFEF";
+						}else{
+							$bgcolor = "#DDD";	
+						}
+						$j = $j+1;
+				?>
+                        <tr style="padding:0 15px; background-color:<?php echo $bgcolor;?>;">
+                        	<td><?php $i++;echo $i;?>.</td>
+                            <td colspan="4"><strong><?php echo $val['headline'];?></strong> <div style="display:none;color:#FF0000;" id="result_<?php echo $val['post_id'];?>"><i class="fa fa-spinner fa-spin"></i></div></td>
+                        </tr>
+                        <tr style="padding:0 15px; background-color:<?php echo $bgcolor;?>;">
+                        	<td></td>
+                            <td><input type="text" id="meta_title_<?php echo $val['post_id'];?>" name="meta_title_<?php echo $val['post_id'];?>" value="<?php echo $val['meta_title'];?>" maxlength="65" style="width:200px;" /></td>
+                            <td><input type="text" id="meta_keyword_<?php echo $val['post_id'];?>" name="meta_keyword_<?php echo $val['post_id'];?>" value="<?php echo $val['meta_keyword'];?>" maxlength="160" style="width:325px;" /></td>
+                            <td><input type="text" maxlength="160" id="meta_desc_<?php echo $val['post_id'];?>" name="meta_desc_<?php echo $val['post_id'];?>" value="<?php echo $val['meta_desc'];?>" style="width:325px;" /></td>
+                            <td align="center"><!--<a href="#" title="view"><i class="fa fa-search"></i></a>&nbsp;&nbsp;-->
+                                <a href="javascript:void(0);" onclick="manageTags('<?php echo $val['post_id'];?>')" title="Save"><i class="fa fa-save textblue"></i></a>
+                                
+                            </td>
+                        </tr>
+				<?php
+					} 
+				}?>
+                </tbody>
+            </table>
+    	</div>
+  	</div>
+    <!-- PAGINATION -->
+    <div class="row">
+    	<div class="col-md-12">
+        </div>
+   	</div>
+     <!-- / PAGINATION -->
+</div>
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

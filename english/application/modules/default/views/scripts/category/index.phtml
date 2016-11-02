@@ -1,0 +1,67 @@
+<?php
+$GLOBALS['baseUrl'] = $this->baseUrl();
+
+$strCategoryName = explode("/", $_SERVER['REQUEST_URI']);
+$category_id = $strCategoryName[4];
+//echo $category_id;
+?>
+<?php
+if($this->data)
+{
+?>
+	<div class="cp-news-grid-style-4 mb20">
+		<div class="section-title pink-border">
+			<h2><a href="#" class="textpink"><?php echo getCatName($category_id);?></a></h2>
+			<small></small> 
+		</div>
+		<div class="cp-news-grid-style-3">
+			<div class="grid-holder">
+				<div class="row">
+					<ul class="cp-load-newsgrid">
+						<?php
+						foreach($this->data as $rsTempVal)
+						{
+						?>
+							<li class="col-md-4 col-sm-4 cp-news-post mb5">
+								<div class="cp-thumb">
+								<?php $p1 = getcwd().'/public/products/image/'.$rsTempVal['image'];?>
+								<a href="<?php echo $GLOBALS['baseUrl'].'/postdetail/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>">
+								<?php if(file_exists($p1)){?>
+									<img src="<?php echo $GLOBALS['baseUrl'].'/public/products/image/thumb/'.$rsTempVal['image'];?>" alt="<?php echo insertReplacementTag($rsTempVal['headline']);?>" title="<?php echo insertReplacementTag($rsTempVal['headline']);?>" />
+								<?php } else {?>
+									<img src="<?php echo $GLOBALS['baseUrl'];?>/public/images/comingsoon.jpg" alt="<?php echo insertReplacementTag($rsTempVal['headline']);?>" title="<?php echo insertReplacementTag($rsTempVal['headline']);?>" />
+								<?php }?>	
+								</a>
+								</div>
+								<div style="background-color:#EFEFEF; border:1px #CCC solid; padding:5px;">
+									<h3 class="h3-min-height">
+									<a href="<?php echo $GLOBALS['baseUrl'].'/postdetail/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>"><?=$rsTempVal['headline'];?></a></h3>
+									<div class="floatright text11"><a href="<?php echo $GLOBALS['baseUrl'].'/postdetail/index/id/'.$rsTempVal['post_id'].'/'.$rsTempVal['english_url'];?>" class="textpink">more...</a></div>
+									<div class="text11 textblue" style="margin-top:20px; padding:5px; background-color:#CCC;">By <?php echo $rsTempVal['user_name'];?></div>
+								</div>
+							</li>
+						<?php
+						}
+						?>
+					</ul>
+				</div>
+			</div>
+		</div>
+	
+		<!-- PAGINATION -->
+		<div class="form-group">
+			<div class="col-12">
+				<?php 
+				echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+				?>
+			</div>
+		</div>
+		<!-- / PAGINATION -->
+  	</div>
+<?php
+}
+?>
+
+
+      
+		

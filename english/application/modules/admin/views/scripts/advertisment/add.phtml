@@ -1,0 +1,316 @@
+<?php
+//include_once('../post/public/fckeditor/fckeditor.php');
+//admin session object create
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$city = $recods['city'];
+$usertype = $recods['user_type'];
+?>
+<script type="text/javascript">
+$(document).ready(function() {
+		$("#category_id").change(function() {
+		//alert($(this).val());
+		url = '<?php echo $this->baseUrl();?>/admin/advertisment/ajaxsubcat?category_id='+$(this).val();
+		//alert(url);
+		//$("#parentId option:selected").remove();
+		$('#parentId select').children('option').removeAttr("selected");
+		$.get(url, function(data) {
+			$("#loadSubCat").html(data);
+		});
+		
+	});
+
+});
+</script>
+
+<!-- / PHOTO PREVIEW -->
+<script type="text/javascript">//<![CDATA[ 
+        $(window).load(function () {
+            function readPhotoURL(input) {
+                //alert(input.files[0].size);
+                if (input.files[0].size > 2097152) {
+                    alert('Please photo image size maximum 2mb only');
+                    $("#image").val('');
+					$('#imgPhoto').hide();
+                    return (false);
+                }
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    $('#image').show();
+                    reader.onload = function (e) {
+						$('#imgPhoto').show();
+                        $('#imgPhoto').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image").change(function () {
+                var imgName = $("#image").val();
+                var sptImgName;
+                var extImageName;
+                if ($.browser.mozilla == false) {
+                    sptImgName = imgName.split("\\");
+                    extImageName = sptImgName[2].split('.');
+
+                } else {
+                    sptImgName = imgName;
+                    extImageName = sptImgName.split('.');
+                }
+
+                var getExt = extImageName[1];
+                if (getExt != 'jpg' && getExt != 'jpeg') {
+                    alert('Please upload JPG, JPEG file in Photo of the post.');
+                    $('#image').val('');
+					$('#imgPhoto').hide();
+                    return (false);
+                } //else { //$('#imgPhoto').show(); }
+
+                if ($.browser.chrome || $.browser.mozilla) {
+                    readPhotoURL(this);
+                } else if ($.browser.msie) {
+                    $('#imgPhoto').show();
+                    document.getElementById('imgPhoto').src = $("#txtphoto").val();
+                }
+            });
+        });//]]>  
+    </script>
+<!-- / PHOTO PREVIEW -->
+	<!-- DATE PICKER -->
+
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+
+	<!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery-ui.js"></script>
+
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.js"></script>
+
+    <link href="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.css" rel="stylesheet" />
+
+    <script>
+
+	$(function() {
+		
+		
+		//var year = d.getFullYear();
+		//d.setFullYear(year);
+		$("#startdate").datepicker({
+			minDate: -0
+			, defaultDate: "+1w"
+			//, changeMonth: true
+			//, changeYear: true
+			, dateFormat: 'yy-m-d'
+			//, yearRange: '1954:' + year + ''
+			//, defaultDate: d
+			//, numberOfMonths: 2
+			, onClose: function (selectedDate) {
+				$("#enddate").datepicker("option", "minDate", selectedDate);
+			}
+		});
+
+		// Employee Join To Date on Registration.aspx //
+		$("#enddate").datepicker({
+			minDate: -0
+			, defaultDate: "+1w"
+			//, changeMonth: true
+			//, changeYear: true
+			, dateFormat: 'yy-m-d'
+			//, yearRange: '1954:' + year + ''
+			//, defaultDate: d
+			//, numberOfMonths: 2
+			, onClose: function (selectedDate) {
+				$("#startdate").datepicker("option", "maxDate", selectedDate);
+			}
+		});
+		
+		
+		/*var year = d.getFullYear();
+        d.setFullYear(year);
+    	$( "#startdate" ).datepicker({ 
+
+			minDate: -0, 
+
+			maxDate: "+10D", 
+
+			dateFormat: 'yy-m-d',
+			
+			onClose: function (selectedDate) {
+				$("#enddate").datepicker("option", "minDate", selectedDate);
+			}
+			
+         });
+		 
+		 $( "#enddate" ).datepicker({ 
+
+			minDate: -0, 
+
+			maxDate: "+10D", 
+
+			dateFormat: 'yy-m-d',
+			onClose: function (selectedDate) {
+				$("#startdate").datepicker("option", "maxDate", selectedDate);
+			}
+
+         });*/
+
+  	
+
+		//$('#scheduleTime').timepicker();
+
+    });
+
+    </script>
+
+    <!-- / DATE PICKER -->
+
+<div class="pageheader">
+  <h2><i class="fa fa-home"></i>Add Advertisment</h2>
+  <div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+      <li><a href="<?php echo $this->baseUrl();?>/admin/advertisment/"><strong>Back</strong></a></li>
+    </ol>
+  </div>
+</div>
+<div class="contentpanel">
+<div class="panel panel-default">
+<div class="panel-body panel-body-nopadding">
+    <form name="frmpost" id="frmpost" enctype="multipart/form-data" method="post" action="<?php echo $this->baseUrl();?>/admin/advertisment/add">
+    	
+        <div class="form-group">
+    		<label class="col-sm-3 control-label">Ads Position</label>
+    		<div class="col-sm-4">
+			<?php 
+            $query = "SELECT * FROM `adcategory` WHERE isActive = 1";
+            $res = Zend_Registry::get("db")->fetchAll($query);
+            ?>
+    			<select class="select2" name="idadCategory" id="idadCategory">
+                	<option value="">Select</option>
+    				<?php if($res){ foreach($res as $val){ ?>
+    				<option value="<?php echo $val['idadCategory'];?>" <?php if($GLOBALS['idadCategory'] == $val['idadCategory']){echo 'selected';}?>><?php echo $val['adCategory'];?></option>
+    				<?php }}?>
+    			</select>
+    		</div>
+    	</div>
+        
+        <div class="form-group">
+            <label class="col-sm-3 control-label">हैडलाइन</label>
+            <div class="col-sm-9">
+                <input type="text" placeholder="हैडलाइन भरें" id="headline" name="headline" value="<?php //echo $headline;?>" class="form-control" maxlength="100" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">अंग्रेजी यूआरएल [English URL]</label>
+            <div class="col-sm-9">
+            <input type="text" placeholder="अंग्रेजी यूआरएल भरें" id="englishurl" name="englishurl" class="form-control" maxlength="1000" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="disabledinput">फोटो लगाएं</label>
+            <div class="col-sm-9">
+            <input type="file" name="image" id="image" class="form-control" />
+            <img id="imgPhoto" src="<?php echo $this->baseUrl();?>/public/admin/images/Blank.png" style="display:none;height:100px;width:150px;"> <span id="lblError2" style="color: red;"></span> </div>
+        </div>
+        <div class="form-group">
+      		<label class="col-sm-3 control-label">Head Tag Ads Script
+            <div>
+            <small class="text-danger">Notes: Google Ad Sense Supporting Script</small>
+            </div>
+      		</label>
+            <div class="col-sm-9">
+        		<textarea class="form-control" id="adscriptforheadtag" name="adscriptforheadtag" rows="5" placeholder="विज्ञापन दिखाने वाले स्क्रिप्ट के लिए सपोर्टिंग स्क्रिप्ट यहाँ डालें अगर जरुरी हो तो, अन्यथा खाली छोड़ दें|"></textarea>
+      		</div>
+    	</div>
+        <div class="form-group">
+      		<label class="col-sm-3 control-label">Body Tag Ads Script
+            <div>
+            <small class="text-danger">Notes: Google Ad Sense Script place on exact position for display ads</small>
+            </div>
+      		</label>
+            <div class="col-sm-9">
+        		<textarea class="form-control" id="adscriptforbodytag" name="adscriptforbodytag" rows="5" placeholder="यहाँ वह स्क्रिप्ट डालें जिससे विज्ञापन दिखेगा|" ></textarea>
+      		</div>
+    	</div>
+        
+        <div class="form-group">
+            <label class="col-sm-3 control-label">विज्ञापन तारीख [Ads Date]</label>
+            <div class="col-sm-1" style="margin-right:5px;">
+			   	<small>Start Date</small> <input class="form-control" id="startdate" name="startdate" type="text" maxlength="10" style="width:90px;" autocomplete="off" />
+            </div>
+
+            <div class="col-sm-7">
+               	<small>End Date</small> <input class="form-control time" id="enddate" name="enddate" type="text" value="" style="width:90px;" />
+            </div>
+    	</div>
+    	
+    	<div class="form-group">
+            <label class="col-sm-3 control-label">स्टेटस</label>
+            <div class="col-sm-2">
+                <select name="isActive" id="isActive" class="select2">
+                	<option value="">Select</option>
+                    <option value="0">Inactive</option>
+                    <option value="1">Active</option>
+                </select>
+            </div>
+    	</div>
+    	<div class="panel-footer">
+      		<div class="row">
+        		<div class="col-sm-6 col-sm-offset-3">
+          		<?php //echo $usertype;?>
+          		<button class="btn btn-primary" id="submit" onclick="return validate()">Submit</button>
+         		&nbsp;
+          		<button class="btn btn-default">Cancel</button>
+        		</div>
+      		</div>
+    	</div>
+    <!-- panel-footer -->
+  </form>
+</div>
+<!-- panel --> 
+	<script>
+	function validate() {
+		var idadCategory = $('#idadCategory').val();
+		var headline = $('#headline').val();
+		var image = $('#image').val();
+		var startdate = $('#startdate').val();
+		var enddate = $('#enddate').val();
+		var isActive = $('#isActive').val();
+		
+		if($.trim(idadCategory) == '' || idadCategory == null){
+			alert('कृपया विज्ञापन का जगह चुनें|');
+			$('#idadCategory').focus();
+			return (false);
+		}
+		if($.trim(headline) == '' || headline == null){
+			alert('कृपया हेडलाइन भरें|');
+			$('#headline').focus();
+			return (false);
+		}
+		/*if($.trim(englishurl) == '' || englishurl == null){
+			alert('कृपया एन्लिश यू आर एल (URL) भरें|');
+			$('#englishurl').focus();
+			return (false);
+		}*/
+		if($.trim(image) == '' || image == null){
+			alert('कृपया फोटो लगाएं|');
+			$('#image').focus();
+			return (false);
+		}
+		if($.trim(startdate) == '' || startdate == null){
+			alert('कृपया विज्ञापन शुरू होने की तारीख भरें|');
+			$('#startdate').focus();
+			return (false);
+		}
+		if($.trim(enddate) == '' || enddate == null){
+			alert('कृपया विज्ञापन का अंतिम तारीख भरें|');
+			$('#enddate').focus();
+			return (false);
+		}
+		if($.trim(isActive) == '' || isActive == null){
+			alert('कृपया विज्ञापन का स्टेटस चुनें');
+			$('#isActive').focus();
+			return (false);
+		}
+	};
+	</script> 

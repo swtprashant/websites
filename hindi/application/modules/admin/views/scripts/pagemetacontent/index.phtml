@@ -1,0 +1,126 @@
+<?php
+include_once('public/fckeditor/fckeditor.php');
+//admin session object create
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$city = $recods['city'];
+$usertype = $recods['user_type'];
+?>
+<script>
+function manageTags()
+{
+	//alert('I am here..');
+	var contentHeading = $('#contentHeading').val();
+	var meta_title = $('#meta_title').val();
+	var meta_keyword = $('#meta_keyword').val();
+	var meta_desc = $('#meta_desc').val();
+	if (contentHeading == ''){
+		alert("Please select page.");
+		$('#contentHeading').focus();
+		return (false);
+	} else if (meta_title == ''){
+		alert("Please fill proper title value.");
+		$('#meta_title').focus();
+		return (false);
+	} else if (meta_keyword == ''){
+		alert("Please fill proper keywords. Keywords seperated by comma.");
+		$('#meta_keyword').focus();
+		return (false);
+	} else if (meta_desc == ''){
+		alert("Please fill proper description.");
+		$('#meta_desc').focus();
+		return (false);
+	}
+	
+	var dataString = 'contentHeading='+encodeURIComponent(contentHeading)+'&meta_title='+encodeURIComponent(meta_title)+'&meta_keyword='+encodeURIComponent(meta_keyword)+'&meta_desc='+encodeURIComponent(meta_desc);
+	url = '<?php echo $this->baseUrl();?>/admin/pagemetacontent/ajaxcall?'+dataString;
+	//alert(url);
+	$('#result').show();
+	$.get(url, function(data) {
+		$('#result').html(data);
+		//$('#result').hide(5000);
+		$('#contentHeading').val(null);
+		$('#meta_title').val(null);
+		$('#meta_keyword').val(null);
+		$('#meta_desc').val(null);
+	});
+};
+
+function getList()
+{
+	var dataString = '';
+	url = '<?php echo $this->baseUrl();?>/admin/pagemetacontent/ajaxcall?'+dataString;
+	//alert(url);
+	$('#result').show();
+	$.get(url, function(data) {
+		$('#result').html(data);
+		//$('#result').hide(5000);
+	});
+};
+</script>
+<div class="pageheader">
+	<h2><i class="fa fa-home"></i>Manage Page Meta Title, Keywords & Descriptions</h2>
+    <div class="breadcrumb-wrapper">
+    	<ol class="breadcrumb">
+        	<li><a href="<?php echo $this->baseUrl();?>/admin/content/"><strong>Back</strong></a></li>
+        </ol>
+	</div>
+</div>
+<div class="contentpanel">
+	<div class="panel panel-default">
+    	<div class="panel-body panel-body-nopadding">
+			<div class="form-group">
+              	<label class="col-sm-2 control-label">Page</label>
+              	<div class="col-sm-10">
+					<?php 
+                    $query = "SELECT * FROM `category`";
+                    $res = Zend_Registry::get("db")->fetchAll($query);
+					
+                    ?>
+                    <select class="select200" style="width:200px; height:30px;margin:10px 0 0 0;" name="contentHeading" id="contentHeading" placeholder="Select">
+                        <option value=""></option>
+                        <?php if($res){ foreach($res as $val){ ?>
+                      	<option value="<?php echo $val['category'];?>"><?php echo $val['category'];?></option>
+                      	<?php }}?>
+                        <option value="About Us">About Us</option>
+                        <option value="Privacy">Privacy</option>
+                        <option value="Contact Us">Contact Us</option>
+                    </select>
+              	</div>
+      		</div>
+            <div class="form-group">
+              	<label class="col-sm-2 control-label">Meta Title</label>
+              	<div class="col-sm-10">
+                    <input type="text" name="meta_title" id="meta_title" class="form-control" maxlength="65" placeholder="Max. 65 characters including space." title="Max. 65 characters including space." />
+              	</div>
+      		</div>
+            <div class="form-group">
+              	<label class="col-sm-2 control-label">Keyword</label>
+              	<div class="col-sm-10">
+                    <input type="text" name="meta_keyword" id="meta_keyword" class="form-control" maxlength="160" placeholder="Done in 10 phrase within max. 160 characters with comma." title="Done in 10 phrase within max. 160 characters with comma." />
+              	</div>
+      		</div>
+            <div class="form-group">
+              	<label class="col-sm-2 control-label">Description</label>
+              	<div class="col-sm-10">
+                    <input type="text" name="meta_desc" id="meta_desc" class="form-control" maxlength="165" placeholder="Done in 23 phrase within max. 165 characters." title="Done in 23 phrase within max. 165 characters." />
+              	</div>
+      		</div>
+            <div class="form-group">
+              	<label class="col-sm-2 control-label"></label>
+              	<div class="col-sm-10">
+                    <input type="button" name="submit" id="submit" value="Submit" onClick="manageTags()" />
+              	</div>
+      		</div>
+		</div>
+        
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div id="result" style="display:none;"><i class="fa fa-spinner fa-spin"></i></div>
+            </div>
+        </div>
+  	</div>
+ </div>
+ 
+ <script>getList();</script>

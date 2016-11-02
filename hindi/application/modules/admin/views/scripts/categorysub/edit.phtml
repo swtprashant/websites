@@ -1,0 +1,57 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Edit Category</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         	<li><a href="<?php echo $this->baseUrl();?>/admin/category/add"><strong>+ Add Main Category</strong></a></li>
+      		<li><a href="<?php echo $this->baseUrl();?>/admin/category/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+         <form name="frmpost" id="frmpost" method="post" action="<?php echo $this->baseUrl();?>/admin/categorysub/edit/id/<?php echo $this->data['category_id'];?>">
+  
+            <div class="form-group">
+              <label class="col-sm-3 control-label">कैटगरी</label>
+              <div class="col-sm-6">
+				<?php 
+				$query = "SELECT * FROM `category` WHERE status = 1 AND parentId = 0 ORDER BY sort";
+				$res = Zend_Registry::get("db")->fetchAll($query);
+				?>
+					<select class="select2" name="parentId" id="parentId">
+						<option value="">Select</option>
+						<?php if($res){ foreach($res as $val){ ?>
+						 	<option value="<?php echo $val['category_id'];?>" <?php if($this->data['parentId'] == $val['category_id']) {echo 'selected'; }?>><?php echo $val['category'];?></option>
+						<?php }}?>
+					</select>
+			  </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">सब कैटगरी</label>
+                <div class="col-sm-6">
+                	<input type="text" id="category" name="category" value="<?php echo $this->data['category'];?>" placeholder="Enter Sub Category" class="form-control" maxlength="100" />
+                </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Sort</label>
+              <div class="col-sm-6">
+                <input type="text" id="sort" name="sort" value="<?php echo $this->data['sort'];?>" placeholder="Enter Sort Number" class="form-control" maxlength="3" />
+              </div>
+            </div>
+           
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Update</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+        
+      </div><!-- panel -->

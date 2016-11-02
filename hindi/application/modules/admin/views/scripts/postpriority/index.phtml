@@ -1,0 +1,159 @@
+<?php
+//admin session object create
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+
+$host = $_SERVER['HTTP_HOST'];
+//echo $host;
+
+//$city = GetBetween1("live",".","$host");
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$city = 'gaya';
+} else {
+	$city = GetBetween1("live",".","$host");
+}
+?><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Drag&amp;Drop Reorder</title>
+<link href="<?php echo $this->baseUrl();?>/public/admin/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/admin/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/admin/js/jquery-ui.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.reorder_link').on('click',function(){
+		$("ul.reorder-photos-list").sortable({ tolerance: 'pointer' });
+		$('.reorder_link').html('Save Reordering');
+		$('.reorder_link').attr("id","save_reorder");
+		$('#reorder-helper').slideDown('slow');
+		$('.image_link').attr("href","javascript:void(0);");
+		$('.image_link').css("cursor","move");
+		$("#save_reorder").click(function( e ){
+			if( !$("#save_reorder i").length )
+			{
+				$(this).html('').prepend('<img src="<?php echo $this->baseUrl();?>/public/images/refresh-animated.gif"/>');
+				$("ul.reorder-photos-list").sortable('destroy');
+				$("#reorder-helper").html( "Reordering Posts - This could take a moment. Please don't navigate away from this page." ).removeClass('light_box').addClass('notice notice_error');
+	
+				var h = [];
+				$("ul.reorder-photos-list li").each(function() {  h.push($(this).attr('id').substr(9));  });
+				//alert('H = ' + h);
+				$.ajax({
+					type: "GET",
+					//url: "order_update.php",
+					//data: {ids: " " + h + ""},
+					url: "<?php echo $this->baseUrl();?>/admin/postpriority/ajaxcall",
+					data: {ids: " " + h + ""},
+					success: function(html) 
+					{
+						//alert(html);
+						window.location.reload();
+						/*$("#reorder-helper").html( "Reorder Completed - Image reorder have been successfully completed. Please reload the page for testing the reorder." ).removeClass('light_box').addClass('notice notice_success');
+						$('.reorder_link').html('reorder photos');
+						$('.reorder_link').attr("id","");*/
+					}
+					
+				});	
+				return false;
+			}	
+			e.preventDefault();		
+		});
+	});
+	
+});
+</script>
+</head>
+<?php
+$adminsession = new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+?>
+
+<div class="pageheader">
+	<h2><i class="fa fa-home"></i>Set Posts Priority</h2>
+	<div class="breadcrumb-wrapper">
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->baseUrl();?>/admin/post/add"><strong>+ Add</strong></a></li>
+		</ol>
+	</div>
+</div>
+    
+
+<div class="contentpanel">
+	<div class="row">
+    	<div class="col-md-12">
+        	<div style="margin-top:10px;">
+                <a href="javascript:void(0);" class="btn1 outlined mleft_no reorder_link" id="save_reorder">Reorder Post</a>
+                <div id="reorder-helper" class="light_box" style="display:none;">1. Drag post to reorder.<br>2. Click 'Save Reordering' when finished.</div>
+                <div class="gallery" style=" max-height:580px; overflow:auto;">
+                    <ul class="reorder_ul reorder-photos-list">
+                    	<?php 
+                        if($this->data)
+						{
+							foreach($this->data as $val)
+							{
+						?>
+                                <li id="image_li_<?php echo $val['post_id']; ?>" class="ui-sortable-handle">
+                                <a href="javascript:void(0);" style="float:none;color:#000; font-weight:bold;" class="image_link">
+                                <div style="width:100%;">
+                                <?php echo $val['priority'];?> 
+                                <img src="<?php echo $this->baseUrl();?>/public/products/image/thumb/<?php echo $val['image'];?>" class="img" alt=""><?php echo $val['headline'];?></div></a></li>
+                    	<?php 
+							}
+						}
+						?>
+                        
+                        <?php
+						$sql = "";
+						$sql .= "SELECT post_id, headline, image, imagePath, priority FROM `post`";
+						$sql .= " WHERE isDeleted = '0' AND status = 1";
+						//$sql .= " AND city = '$city'";
+						$sql .= " AND priority NOT IN (1,2,3,4,5)";
+						//if($usertype == 2){
+						//	$sql .= " AND `user_id` = '".$userid."'";
+						//}
+						$sql .= " ORDER BY post_id DESC LIMIT 20";
+						//echo $sql;
+						//exit;
+						$rsTemp = Zend_Registry::get("db")->fetchAll($sql);
+						if($rsTemp)
+						{
+							foreach($rsTemp as $val)
+							{
+						?>
+                                <li id="image_li_<?php echo $val['post_id']; ?>" class="ui-sortable-handle">
+                                <a href="javascript:void(0);" style="float:none;color:#000; font-weight:bold;" class="image_link">
+                                <div style="width:100%;">
+                                <?php echo $val['priority'];?> 
+                                <img src="<?php echo $this->baseUrl();?>/public/products/image/thumb/<?php echo $val['image'];?>" class="img" alt=""><?php echo $val['headline'];?></div></a></li>
+                        <?php 
+							}
+						}
+						?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+  	</div>
+</div>
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

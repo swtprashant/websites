@@ -1,0 +1,183 @@
+<?php
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+
+$adminuserid = '';
+$adminusertype = $recods['user_type'];
+$adminuserid = $recods['user_id'];
+$adminusertype = $recods['user_type'];
+//echo 'XXXXX = ' .$adminuserid;
+
+//$GLOBALS['intro'] = $this->data['intro']
+
+$GLOBALS['baseUrl'] = $this->baseUrl();
+
+$host = $_SERVER['HTTP_HOST'];
+
+function GetBetween1($var1="",$var2="",$pool){
+	$temp1 = strpos($pool,$var1)+strlen($var1);
+	$result = substr($pool,$temp1,strlen($pool));
+	$dd=strpos($result,$var2);
+	if($dd == 0){
+		$dd = strlen($result);
+	}
+	return substr($result,0,$dd);
+}
+
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$city = 'gaya';
+} else {
+	$city = GetBetween1("live",".","$host");
+}
+
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$GLOBALS['city'] = 'gaya';
+} else {
+	$GLOBALS['city'] = GetBetween("live",".","$host");
+}
+?>  <?php
+/*
+<!--<link href="<?php echo $this->baseUrl();?>/public/jPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" /><script src="<?php echo $this->baseUrl();?>/public/jPlayer/lib/jquery.min.js"></script><script src="<?php echo $this->baseUrl();?>/public/jPlayer/dist/jplayer/jquery.jplayer.min.js"></script><script src="<?php echo $this->baseUrl();?>/public/jPlayer/dist/add-on/jplayer.playlist.min.js"></script>--> */ ?> <?php
+if ($this->data['post_id'] == ''){
+?> <div class=textdanger><strong>This post is not available at this time</strong></div> <?php
+} else {
+
+?> <div class=cp-single-post><div class=cp-post-content><h2> <?php
+			if (!empty($this->data['postType'])){
+			?> <span class="textFF0000 textarial"> <?php echo $this->data['postType'];?>: </span> <?php
+			}
+			?> <?php echo insertReplacementTag($this->data['headline']);?> </h2></div><div style="text-align:center;margin:20px 0 60px 0;z-index:0"><script src=//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js async></script><ins class=adsbygoogle data-ad-client=ca-pub-7910693805653243 data-ad-slot=8170424210 style=display:block data-ad-format=auto></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div><div style="clear:both;margin:5px 0"></div><div class=cp-thumb style="margin:5px 0"><img src="http://<?php echo $_SERVER['HTTP_HOST'] . $this->baseUrl();?>/public/products/image/<?php echo $this->data['image'];?>"alt="" id="detailimg1"></div><div class="cp-post-content"><ul class="cp-post-tools"><li><i class="icon-1"></i> <?php 
+				$date = $this->data['created'];
+				$createdOn = new DateTime($date);
+				?> <?php echo date_format($createdOn, 'd M, Y');?> </li> <?php if(!empty($this->data['ReporterName'])){?> <li><i class=icon-2></i> <?php echo $this->data['ReporterName'];?></li> <?php };?> <li><i class=icon-2></i> <?php echo $this->data['user_name'];?></li> <?php if ($adminuserid !=''){?> <li><i class=icon-21></i> <span style=margin-right:20px;color:red><a href=javascript:void(0) onclick='window.open("<?php echo $this->baseUrl();?>/admin/post/edit/id/<?php echo $this->data['post_id'];?>")'style=color:red>Edit This Post</a></span></li> <?php };?> </ul><p style="border-top:2px solid #CCC;border-bottom:2px solid #CCC;padding:10px 0"><span class="m20 text19 textblack"> <?php echo insertReplacementTag($this->data['intro']);?></span><div class=m20 style=text-align:center> <?php echo getAds(8, '', 8)?> </div><div class="m20 text17"><?php echo str_replace('</p>', '</div>', str_replace('<p>', '<div style="margin-bottom:10px;">',replaceJunk(strip_tags(insertReplacementTag($this->data['content']),"<b><strong><p><i><img><a><ul><li><br><br /><blockquote><script><table><iframe><tbody><tr><td><div><span>"))));?> </div></div><div class=cp-post-share-tags><div class=row><div class="col-md-12 cp-post-share"><span class=st_facebook_large displaytext=Facebook></span> <span class=st_whatsapp_large displaytext=WhatsApp></span> <span class=st_twitter_large displaytext=Tweet></span> <span class=st_googleplus_large displaytext="Google +"></span></div></div><div class="m20 row"><div class="col-6 text15 text-left"><?php echo getPrevNextRec('Prev', $this->data['post_id'], $city, $this->baseUrl(), 'Bottom')?></div><div class="col-6 text15 text-right"><?php echo getPrevNextRec('Next', $this->data['post_id'], $city, $this->baseUrl(), 'Bottom')?></div></div></div><div style="text-align:center;margin:20px 0"><script src=//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js async></script><ins class=adsbygoogle data-ad-client=ca-pub-7910693805653243 data-ad-slot=9507556612 style=display:inline-block;width:336px;height:280px></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div> <?php 
+	$mySQL = "";
+	$mySQL = "SELECT (SELECT COUNT(0) AS totComm FROM `postcomment` WHERE `post_id` = '".$this->data['post_id']."') AS totComment, author, email, comment, DATE_FORMAT(createdOn,'%d-%m-%Y') AS createdOn FROM `postcomment` WHERE `post_id` = '".$this->data['post_id']."'";
+	$rsTemp = Zend_Registry::get("db")->fetchAll($mySQL);
+	if($rsTemp)
+	{
+	?> <div class="m20 cp-post-comments"><div class="pink-border section-title"><h2><?php //echo $rsTemp['totComment']?> Comments</h2></div></div> <?php
+		$i = 1; 
+		$val = ""; 
+		foreach($rsTemp as $val)
+		{
+			if ($i % 2) 
+			{ 
+				$bgcolor = "#EFEFEF";
+			} else {
+				$bgcolor = "#DDD";	
+			}
+			$i = $i+1;
+		?> <div class="m20 cp-author"><div class=cp-author-details><h3><a href=#><?php echo $val['author'];?></a></h3><p><?php echo $val['comment'];?></div></div> <?php 
+		}
+	}
+	?> <div class="m20 cp-comments-form"><div class="pink-border section-title"><h2>Leave A comment</h2></div><div class=row><form class=material><div class=col-md-6><div class=input-group><div class="material-input input"><input id=author name=author maxlength=100 placeholder="Your Name"required> <span class=material-bar></span></div><div class="material-input input"><input id=email name=email maxlength=200 placeholder="Email Address"required type=email> <span class=material-bar></span></div></div></div><div class=col-md-6><div class=input-group><div class="material-input textarea"><textarea id=comments name=comments placeholder=Comments></textarea><span class=material-bar></span></div></div><input id=comment_post_ID name=comment_post_ID type=hidden value="<?php echo $this->data['post_id'];?>"> <button class="btn btn-submit waves-button waves-effect"id=comment-submit type=submit>Submit <i class="fa fa-angle-right"></i></button></div></form></div></div></div><script src=http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js></script><script>$(document).ready(function(){$("#comment-submit").click(function(){var l=$("#author").val(),e=$("#email").val(),t=$("#comments").val(),a=$("#comment_post_ID").val();if(""==l)return alert("Please fill your name."),$("#author").focus(),!1;if(""==e)return alert("Please fill valid email."),$("#email").focus(),!1;if(""==t)return alert("Please your comment."),$("#comment").focus(),!1;var m="author="+l+"&email="+e+"&comment="+t+"&comment_post_ID="+a;url="<?php echo $this->baseUrl();?>/postdetail/ajaxcall?"+m,$.get(url,function(l){$("#commentresult").html(l),$("#commentresult").hide(1e4),$("#author").val(null),$("#email").val(null),$("#comment").val(null)})})})</script> <?php //echo getPrevNextRec('Prev', $this->data['post_id'], $city, $this->baseUrl(), 'OnScreen')?> <?php //echo getPrevNextRec('Next', $this->data['post_id'], $city, $this->baseUrl(), 'OnScreen')?> <?php
+}
+?>  
+<?php echo getMainBodyCategoryWisePostOnDetailPage('Main Body On Page',"Don't Miss")?> <?php echo getMainBodyCategoryWisePostOnDetailPage('Main Body On Page','Lifestyle')?><?php echo getMainBodyCategoryWisePostOnDetailPage('Main Body On Page','Sports')?><?php echo getMainBodyCategoryWisePostOnDetailPage('Main Body On Page','Bollywood')?>  
+<?php
+function getUserPhoto($user_id, $url){
+	if ($user_id !='')
+	{
+		$mySQL = "";
+		$mySQL = "SELECT userphoto, city FROM `user` WHERE user_id = '".$user_id."'";
+		//echo '1 = ' . $mySQL;
+		//die();
+		$rsTemp = Zend_Registry::get("db")->fetchrow($mySQL);
+		if($rsTemp)
+		{ 
+			return '<img id="imgPhoto" src="http://live'.$rsTemp['city'].'.com/public/userimages/'.$rsTemp['userphoto'].'" style="width:30px;height:30px;border-radius:50px;padding:2px; border:1px #CCC solid;" />';
+		} else {
+			return '<i class="fa fa-user"></i> ';
+		}
+	} else {
+		return '<i class="fa fa-user"></i> ';
+	}	
+}
+
+function getCategoryId($post_Id)
+{
+	if ($post_Id !='')
+	{
+		$mySQL = "";
+		$mySQL = "SELECT category_Id FROM `post_category` WHERE post_id = '".$post_Id."'";
+		//echo '1 = ' . $mySQL;
+		//die();
+		$rsTemp = Zend_Registry::get("db")->fetchAll($mySQL);
+		if($rsTemp)
+		{ 
+			foreach($rsTemp as $catVal)
+			{
+				return $catVal['category_Id'];
+			}
+		} else {
+			return '';
+		}
+	} else {
+		return '';
+	}
+}
+
+function replaceJunk($str){
+	$str = str_replace('font-family: helvetica, arial, sans-serif;','', $str);	
+	$str = str_replace('helvetica','', $str);
+	$str = str_replace(' style=""','',$str);
+	$str = str_replace('class="text_exposed_show" ','',$str);
+	$str = str_replace(' background-color: rgb(255, 255, 255);','',$str);
+	$str = str_replace('    line-height: 21.4667px;','',$str);
+	$str = str_replace(' class="MsoNormal" ','', $str);	
+	$str = str_replace('class="MsoNormal"','', $str);	
+	$str = str_replace('background-image: initial; ','', $str); 
+	$str = str_replace('background-attachment: initial; ','', $str); 
+	$str = str_replace('background-size: initial; ','', $str); 
+	$str = str_replace('background-origin: initial; ','', $str);
+	$str = str_replace('background-clip: initial; ','', $str);
+	$str = str_replace('background-position: initial; ','', $str);
+	$str = str_replace('background-repeat: initial; ','', $str);
+	$str = str_replace('<font color="#222222" face="Mangal, serif">','', $str);
+	$str = str_replace('<span style="font-size: 18.6667px; line-height: 21.4667px;">','', $str);
+	$str = str_replace('arial','', $str);	
+	$str = str_replace('Mangal','', $str);	
+	$str = str_replace('serif','', $str);	
+	$str = str_replace('sans-serif','', $str);
+	$str = str_replace('class="MsoNormal"','', $str);
+	$str = str_replace('<p  style="        ">&nbsp;</p>','', $str);
+	$str = str_replace('font-size: medium;','', $str);		
+	$str = str_replace('font-family','', $str);	
+	$str = str_replace('font-size: 14px;','', $str);
+	$str = str_replace('line-height: 19.32px;','', $str);
+	$str = str_replace('margin: 6px 0px;','', $str);
+	$str = str_replace('color: rgb(20, 24, 35);','', $str);
+	$str = str_replace('margin: 0px 0px 6px;','', $str);
+	$str = str_replace('color: rgb(52, 52, 52);','', $str);
+	$str = str_replace('margin-bottom: 0.0001pt;','', $str);
+	$str = str_replace('line-height: 24.4pt;','', $str);
+	$str = str_replace('background-image: initial;','', $str);
+	$str = str_replace('background-attachment: initial;','', $str);
+	$str = str_replace('background-size: initial;','', $str);
+	$str = str_replace('background-origin: initial;','', $str);
+	$str = str_replace('background-clip: initial;','', $str);
+	$str = str_replace('background-position: initial;','', $str);
+	$str = str_replace('background-repeat: initial;','', $str);
+	$str = str_replace(' style="    "','', $str);
+	$str = str_replace(' style=""','', $str);
+	$str = str_replace('style=": , ; "','', $str);
+	$str = str_replace(' lang="HI" ','', $str);
+	$str = str_replace('style="        "','', $str);
+	$str = str_replace('style=": , ;        "','', $str);
+	$str = str_replace('<p  >&nbsp;</p>','', $str);
+	$str = str_replace('data-block="true"','', $str);
+	$str = str_replace('data-offset-key="1787j-0-0"','', $str);
+	$str = str_replace('class="_209g _2vxa"','', $str);
+	$str = str_replace('style="direction: ltr; position: relative;    line-height: 18px; white-space: pre-wrap;"','', $str);
+	$str = str_replace('line-height: 18px;','', $str);
+	$str = str_replace('white-space: pre-wrap;','', $str);
+	$str = str_replace('class="text_exposed_show"','', $str);
+	$str = str_replace('<div>&nbsp;</div>','', $str);
+	$str = str_replace('<spanstyle="line-height: 115%; : , ;">','', $str);
+	//$str = str_replace('</span>','', $str);
+	$str = str_replace('<div>','<p>', $str);
+	$str = str_replace('</div>','</p>', $str);
+	return $str;
+}
+?>

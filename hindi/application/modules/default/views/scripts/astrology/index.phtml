@@ -1,0 +1,139 @@
+<?php
+$GLOBALS['baseUrl'] = $this->baseUrl();
+?>
+<div class="cp-news-grid-style-4">
+    <?php
+	$query = "SELECT
+		`idastrology`,
+		`aries`,
+		`taurus`,
+		`gemini`,
+		`cancer`,
+		`leo`,
+		`virgo`,
+		`libra`,
+		`scorpio`,
+		`sagittarius`,
+		`capricorn`,
+		`aquarius`,
+		`pisces`,
+		`astrodate`,
+		`createdby`,
+		`isactive`,
+		`isdeleted`
+		FROM `astrology` WHERE isactive=1 AND astrodate = CURDATE();";
+	$rsTemp = Zend_Registry::get("db")->fetchRow($query);
+	if($rsTemp)
+	{
+	?>
+        <div class="section-title pink-border">
+            <h2 class="textpink">आज का राशीफल <?php echo $rsTemp['astrodate'];?></h2>
+        </div>
+        <div class="cp-news-grid-style-3">
+            <div class="grid-holder">
+                <div class="row">
+                    <ul>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/aries.png" style="width:7% !important;">
+                                <strong><?php echo 'मेष: ';?></strong>
+                                <?php echo $rsTemp['aries'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/taurus.png" style="width:7% !important;">
+                                <strong><?php echo 'वृष: ';?></strong>
+                                <?php echo $rsTemp['taurus'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/gemini.png"  style="width:7% !important;">
+                                <strong><?php echo 'मिथुन: ';?></strong>
+                                <?php echo $rsTemp['gemini'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/cancer.png" style="width:7% !important;">
+                                <strong><?php echo 'कर्क: ';?></strong>
+                                <?php echo $rsTemp['cancer'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/leo.png" style="width:7% !important;">
+                                <strong><?php echo 'सिंह: ';?></strong>
+                                <?php echo $rsTemp['leo'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/virgo.png" style="width:7% !important;">
+                                <strong><?php echo 'कन्या: ';?></strong>
+                                <?php echo $rsTemp['virgo'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/libra.png" style="width:7% !important;">
+                                <strong><?php echo 'तुला: ';?></strong>
+                                <?php echo $rsTemp['libra'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/scorpio.png" style="width:7% !important;">
+                                <strong><?php echo 'वृश्चिक: ';?></strong>
+                                <?php echo $rsTemp['scorpio'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/sagittarius.png" style="width:7% !important;">
+                                <strong><?php echo 'धनु: ';?></strong>
+                                <?php echo $rsTemp['sagittarius'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/capricorn.png" style="width:7% !important;">
+                                <strong><?php echo 'मकर: ';?></strong>
+                                <?php echo $rsTemp['capricorn'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/aquarius.png" style="width:7% !important;">
+                                <strong><?php echo 'कुंभ: ';?></strong>
+                                <?php echo $rsTemp['aquarius'];?></h3>
+                            </div>
+                       	</li>
+                        <li class="col-md-12 col-sm-12 cp-news-post">
+                            <div>
+                            	<h3 style="color:#000;min-height:90px !important;"><img src="<?php echo $this->baseUrl();?>/public/iconastro/pisces.png" style="width:7% !important;">
+                                <strong><?php echo 'मीन: ';?></strong>
+                                <?php echo $rsTemp['pisces'];?></h3>
+                            </div>
+                       	</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- PAGINATION -->
+        <div class="form-group">
+        	<div class="col-12">
+            	<?php 
+                //echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+                ?>
+            </div>
+        </div>
+        <!-- / PAGINATION -->
+<?php
+	}
+?>
+</div>
+
+      
+		

@@ -1,0 +1,60 @@
+<?php
+if (!empty($_FORM['category'])){
+	$category = $_FORM['category'];
+} else {
+	$category = $this->data['category'];
+}
+?>
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Edit Category</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/category/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+		<div class="panel panel-default">
+			<div class="panel-body panel-body-nopadding">
+				<form class="form-horizontal form-bordered" name="form1" id="form1" action="<?php echo $this->baseUrl();?>/admin/category/edit/id/<?php echo $this->data['category_id'];?>" method="post">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">Category</label>
+							<div class="col-sm-3">
+								<input type="text" id="category" name="category" value="<?php echo $category;?>" placeholder="Enter Category" class="form-control" required />
+							  	<div class="error_container"><span class="error"><?php if(!empty($this->error['category'])){ echo $this->error['category'];}?></span></div>
+              				</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Position</label>
+							<div class="col-sm-3">
+								<select name="position" id="position" class="select2">
+									<option value="">Select</option>
+									<option value="Top Menu" <?php if ($this->data['position'] == 'Top Menu'){ echo 'selected';}?>>Top Menu</option>
+									<option value="Right Column" <?php if ($this->data['position'] == 'Right Column'){ echo 'selected';}?>>Right Column</option>
+									<option value="Main Body On Page" <?php if ($this->data['position'] == 'Main Body On Page'){ echo 'selected';}?>>Main Body On Page</option>
+								</select>
+                                <div class="error_container"><span class="error"><?php if(!empty($this->error['position'])){ echo $this->error['position'];}?></span></div>
+							</div>
+						</div>
+						<label class="col-sm-3 control-label">Sort order</label>
+							<div class="col-sm-3">
+								<input type="text" id="sort" name="sort" value="<?php echo $this->data['sort'];?>" placeholder="Enter Sort order" class="form-control" required />
+								<div class="error_container"><span class="error"><?php if(!empty($this->error['sort'])){ echo $this->error['sort'];}?></span></div>
+                            </div>
+						</div>
+						<div class="panel-footer">
+							<div class="row">
+								<div class="col-sm-6 col-sm-offset-3">
+								  <button class="btn btn-primary">Update</button>
+								  <button class="btn btn-default">Cancel</button>
+								</div>
+							</div>
+						</div><!-- panel-footer -->
+					</div>
+				</form>
+			</div>
+		</div>
+	</div><!-- panel -->

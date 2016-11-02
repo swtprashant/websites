@@ -1,0 +1,88 @@
+<?php
+$adminsession = new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+?>
+<script type="text/javascript">
+	function deleteRec(id){
+		var iAgree = confirm("You are sure want to delete?.")
+		if (iAgree == true){
+			document.location.href="<?php echo $this->baseUrl();?>/admin/comment/delete/id/" + id;
+			return(true);
+		} else {
+			return (false);
+		}
+	}
+</script>
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Manage Comments</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <!--<li><a href="<?php //echo $this->baseUrl();?>/admin/post/add"><strong>+ Add</strong></a></li>-->
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+    
+     
+      <div class="row">
+     <div class="col-md-12">
+           <table class="table table-success mb30">
+                    <thead>
+                      <tr>
+                        <th width="10">#</th>
+                      	<th width="128">Name/Email</th>
+                    	<th width="179">Headline</th>
+                    	<th width="386">Comment</th>
+                    	<th width="100">Date</th>
+                      	<th width="78">Status</th>
+                       	<th width="43">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+					$i = 0;
+					if($this->data)
+					{
+						foreach($this->data as $val)
+						{
+					?>
+                          	<tr>
+                        		<td><?php $i++;echo $i;?>.</td>
+                        		<td><?php echo $val['author'];?><br /><i><?php echo $val['email'];?></i></td>
+                        		<td><?php echo $val['headline'];?></td>
+                        		<td class="content"><?php echo $val['comment'];?></td>
+                       			<td><?php echo $val['createdOn'];?></td>
+                       			<td><a><i class="fa fa-check-square-o textgreen" title="Active"></i></a></td>
+                       			<td><a href="<?php echo $this->baseUrl();?>/admin/comment/edit/id/<?php echo $val['idComment'];?>" title="Edit"><i class="fa fa-edit textblue"></i></a>
+                       			<a href="javascript:void(0)" onclick="deleteRec('<?php echo $val['idComment'];?>')" id="delPost" title="Delete This?"><i class="fa fa-trash-o textred"></i></a>
+                       			</td>
+                      		</tr>
+                    <?php
+							//$idContent = $val['idContent']; 
+						} 
+					}?>
+                    </tbody>
+                </table>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

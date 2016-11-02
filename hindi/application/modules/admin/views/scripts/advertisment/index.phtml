@@ -1,0 +1,186 @@
+<?php
+$adminsession = new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+?>
+<script type="text/javascript">
+	function deletePost(post_id){
+		var iAgree = confirm("You are sure want to delete?.")
+		if (iAgree == true){
+			document.location.href="<?php echo $this->baseUrl();?>/admin/advertisment/delete/id/" + post_id;
+			return(true);
+		} else {
+			return (false);
+		}
+	}
+</script>
+<div class="pageheader">
+	<h2><i class="fa fa-home"></i>Manage Ads</h2>
+	<div class="breadcrumb-wrapper">
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->baseUrl();?>/admin/advertisment/add"><strong>+ Add</strong></a></li>
+		</ol>
+	</div>
+</div>
+<!--<link rel="stylesheet" type="text/css" href="<?php //echo $this->baseUrl();?>/public/css/imageviewer.css"/>-->
+<!-- SHOW IMAGE VIEWER -->
+<style>
+.thumbnail {
+	border: 1px solid white;
+	margin: 0 5px 5px 0;
+}
+.spnthumb {
+	display:none;
+	padding:5px;	
+}
+</style>
+<script>
+function showImage(id)
+{
+	$('#'+id).slideDown(5000);
+	$('#'+id).css('z-index', '50');
+	$('#'+id).css('position', 'absolute');
+	$('#'+id).css('left', '120px');
+	$('#'+id).css('background-color', 'lightyellow');
+	//$('#'+id).css('padding', '5');
+	$('#'+id).css('border', '1px dashed #333');
+	$('#'+id).css('border-radius', '5px');
+}
+function hideImage(id)
+{
+	$('#'+id).slideUp('slow');
+}
+</script>
+<!-- / SHOW IMAGE VIEWER -->
+
+<div class="contentpanel">
+	<form name="filter" id="filter" action="" method="post">
+        <div class="row">
+            <div class="col-sm-12" style="background-color:#1d2939; color:#FFF; margin-bottom:15px;"><h5>SEARCH BY:</h5>
+        </div>
+        <div class="tab-content" style="background-color:#D3D7DB; margin-bottom:0px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Keyword</label>
+                <div class="col-sm-4">
+                    <input placeholder="Enter Name Keyword" class="form-control input-sm mb15" name="keyword" id="keyword" value=""  type="text">	 
+                    <input type="submit" name="search" class="button2" value="Search" />
+                    <!--<button class="btn btn-primary btn-block" name="create_lead">Search</button>-->
+                </div>
+            </div>
+        </div>
+	</form>
+</div>
+<div class="info_container">
+	<span class="info_text">
+		<?php if(!empty($this->messages[0])){ echo $this->messages[0];}?>
+	</span>
+</div>   
+<div class="contentpanel">
+	<div class="row">
+    	<div class="col-md-12">
+           	<table class="table table-success mb30" width="100%">
+                <thead>
+                	<tr>
+                        <th width="20">#</th>
+                        <th width="50">Image</th>
+                        <th width="300">Title</th>
+                        <th width="150">Ad Section</th>
+                        <th width="100" nowrap="nowrap">Started On</th>
+                        <th width="100" nowrap="nowrap">Expired On</th>
+                        <th width="96">Posted By</th>
+                        <th width="100">Date</th>
+                        <th width="78">Status</th>
+                        <?php if($usertype != 2){?>
+                        	<th width="43">Action</th>
+                        <?php }?>
+                	</tr>
+                </thead>
+                <tbody>
+                <?php
+                $i = 0;
+                if($this->data)
+				{
+					foreach($this->data as $val)
+					{
+						if($val['isActive'] == 1){
+							$stat =	'<i class="fa fa-check-square-o textgreen" title="Active"></i>'; 
+							//$stat = "<img src='".$this->baseUrl()."/public/admin/images/green_icon.png' width='12' height='12' alt='Activated' border='0' title='Activated'/>";
+						} else {
+							$stat =	'<i class="fa fa-square-o textred" title="Inactive"></i>'; 
+							//$stat = "<img src='".$this->baseUrl()."/public/admin/images/red_icon.png' width='12' height='12' alt='Inactivated' border='0' title='Inactivated'/>";
+						}
+                ?>
+                        <tr>
+                            <td><?php $i++;echo $i;?>.</td>
+                            <td title="Click to show image"><?php echo '<img src="'.$this->baseUrl(). '/public/adimages/'. $val['image'].'" width="50px" style="cursor:pointer;" onmouseover="showImage('.$i.')" onmouseout="hideImage('.$i.')" /><span class="spnthumb" id="'.$i.'"><img src="'.$this->baseUrl(). '/public/adimages/'. $val['image'].'" /><br />'.substr($val['headline'],0,200).'</span>';?></td>
+                            <td><?php echo substr($val['headline'],0,200);?></td>
+                            <td><?php echo getAdSection($val['idadcategory']);?></td>
+                            <td><?php echo $val['startdate'];?></td>
+                            <td><?php echo $val['enddate'];?></td>
+                            <td><?php echo $val['createdBy'];?></td>
+                            <td><?php echo $val['createdOn'];?></td>
+                            <?php if($usertype == 2){?>
+                                <td align="center"><a href=""><?php echo $stat;?></a></td>
+                            <?php } else {?>
+                                <td align="center"><a href="<?php echo $this->baseUrl();?>/admin/advertisment/active/id/<?php echo $val['idadvertisment'];?>"><?php echo $stat;?></a></td>
+                            <?php }?>
+                            <?php if($usertype != 2){?>
+                                <td align="center"><!--<a href="#" title="view"><i class="fa fa-search"></i></a>&nbsp;&nbsp;-->
+                                <a href="<?php echo $this->baseUrl();?>/admin/advertisment/edit/id/<?php echo $val['idadvertisment'];?>" title="Edit"><i class="fa fa-edit textblue"></i></a>
+                                <a href="javascript:void(0)" onclick="deletePost('<?php echo $val['idadvertisment'];?>')" id="delPost" title="Delete This?"><i class="fa fa-trash-o textred"></i></a>
+                            </td>
+                            <?php }?>
+                        </tr>
+				<?php
+					$idadvertisment = $val['idadvertisment']; 
+					} 
+				}?>
+                </tbody>
+            </table>
+            <!-- PAGINATION -->
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td height="10">
+                    <?php 
+                    //echo 'I am here ' . count($this->data);
+                    //echo $this->pageCount;
+                    echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+                    ?>
+                    </td>
+                </tr>
+            </table>
+            <!-- / PAGINATION -->
+    	</div>
+  	</div>
+</div>
+<?php
+function getAdSection($idadCategory){
+	$mySQL = "";
+	$mySQL = "SELECT adcategory FROM adcategory WHERE idadCategory = '".$idadCategory."'";	
+	$rsCat = Zend_Registry::get("db")->fetchRow($mySQL);
+	
+	if($rsCat){
+		return $rsCat['adcategory'];
+	}	
+}
+?>
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

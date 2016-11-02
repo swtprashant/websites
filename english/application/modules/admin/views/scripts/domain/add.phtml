@@ -1,0 +1,73 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Add Domain</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/domain/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+     <form class="form-horizontal form-bordered" name="form1" id="form1" action="<?php echo $this->baseUrl();?>/admin/domain/add" method="post">
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Domain In Hindi</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter Domain In Hindi" id="dhindi" name="dhindi" class="form-control" required />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Domain In English</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter Domain In English" id="denglish" name="denglish" class="form-control" required />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">State Name In Hindi</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter State Name In Hindi" id="sname" name="sname" class="form-control" required />
+              </div>
+            </div>
+            
+             <div class="form-group">
+              <label class="col-sm-3 control-label">Select City</label>
+              <div class="col-sm-5">
+                <select class="select2" id="city" name="city" data-placeholder="Choose a City..." required>
+                  <option value=""></option>
+                  <option value="alwar">Alwar</option>
+                  <option value="basti">Basti</option>
+                  <option value="begusarai">Begusarai</option>
+                  <option value="dhanbad">Dhanbad</option>
+                  <option value="giridih">Giridih</option>
+                  <option value="gaya">Gaya</option>
+                  <option value="patna">Patna</option>
+                  <option value="palamu">Palamu</option>
+                  <option value="ramgarh">Ramgarh</option>
+                  <option value="santkabirnagar">Santkabirnagar</option>
+                  <option value="siddharthnagar">Siddharthnagar</option>
+                  <option value="tehri">Tehri</option> 
+                  </select>
+              </div>
+            </div>   
+                    
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Submit</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+             </div>
+             </form>
+		  </div><!-- panel-footer -->
+        
+     

@@ -1,0 +1,127 @@
+<?php
+$adminsession = new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+?>
+<script type="text/javascript">
+	function deletePost(post_id){
+		var iAgree = confirm("You are sure want to delete?.")
+		if (iAgree == true){
+			document.location.href="<?php echo $this->baseUrl();?>/admin/post/delete/id/" + post_id;
+			return(true);
+		} else {
+			return (false);
+		}
+	}
+</script>
+<!-- SHARE THIS -->
+<!--<script type="text/javascript">var switchTo5x=true;</script>-->
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "9ee8c443-57cf-44ea-8e67-11693a461baf", doNotHash: false, doNotCopy: false, hashAddressBar: false});
+</script>
+<!-- / SHARE THIS -->
+
+<!-- PAGINATION -->
+
+<!-- / PAGINATION -->
+
+<div class="pageheader">
+	<h2><i class="fa fa-home"></i>Manage Gallery</h2>
+	<div class="breadcrumb-wrapper">
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->baseUrl();?>/admin/gallery/add"><strong>+ Add</strong></a></li>
+		</ol>
+	</div>
+</div>
+    
+<div class="info_container">
+	<span class="info_text">
+		<?php if(!empty($this->messages[0])){ echo $this->messages[0];}?>
+	</span>
+</div>   
+<div class="contentpanel">
+	<div class="row">
+    	<div class="col-md-12" id="myTable">
+        	<table class="table table-striped table-success table-bordered mb30" cellspacing="0" width="100%">
+                <thead>
+                	<tr>
+                        <th width="1%">#</th>
+                        <th width="80%">Title</th>
+                        <th width="8%">Date</th>
+                        <th width="10%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                if($this->data)
+				{
+					foreach($this->data as $val)
+					{
+				?>
+                        <tr>
+                            <td><?php echo $val['sno'];?>.</td>
+                            <td><?php echo $val['title'];?></td>
+                            <td nowrap="nowrap"><?php echo $val['createdOn'];?></td>
+                            <td align="center">
+                            <a href="<?php echo $this->baseUrl();?>/admin/gallery/edit/id/<?php echo $val['idgallery'];?>" title="Edit"><i class="fa fa-edit textblue"></i></a>
+                            <a href="javascript:void(0)" onclick="deletePost('<?php echo $val['idgallery'];?>')" id="delPost" title="Delete This?"><i class="fa fa-trash-o textred"></i></a>
+                            </td>
+                        </tr>
+				<?php
+					} 
+				}
+				?>
+                </tbody>
+            </table>
+            <!-- PAGINATION -->
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td height="10">
+                    <?php 
+                    //echo 'I am here ' . count($this->data);
+                    //echo $this->pageCount;
+                    echo $this->paginationControl($this->data, 'Sliding', 'pagination.phtml');
+                    ?>
+                    </td>
+                </tr>
+            </table>
+            <!-- / PAGINATION -->
+        </div>
+  	</div>
+    	
+    
+     
+</div>
+
+<?php
+function getTotalNoView1($post_id){
+	$mySQL = "";
+	$mySQL = "SELECT COUNT(*) AS totCount FROM postview WHERE post_id = '".$post_id."'";
+	$rsTemp = Zend_Registry::get("db")->fetchRow($mySQL);	
+	
+	if($rsTemp){
+		return $rsTemp['totCount'];	
+	}
+}
+?>
+
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

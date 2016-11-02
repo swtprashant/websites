@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+	<meta content="hi" http-equiv="Content-Language">
+    <meta content="hindi" name="language">
+    
+  <title>::: Home :::</title>
+  	<link href="<?php echo $this->baseUrl();?>/public/admin/css/style.default.css" rel="stylesheet">
+  	
+	<script src="<?php echo $this->baseUrl();?>/public/admin/ckeditor/ckeditor.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/ckeditor/samples/js/sample.js"></script>
+    <!--<link rel="stylesheet" href="<?php //echo $this->baseUrl();?>/public/admin/ckeditor/samples/css/samples.css">
+    <link rel="stylesheet" href="<?php //echo $this->baseUrl();?>/public/admin/ckeditor/samples/toolbarconfigurator/lib/codemirror/neo.css">-->
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/jquery-1.11.1.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/jquery-migrate-1.2.1.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/bootstrap.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/modernizr.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/jquery.sparkline.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/toggles.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/retina.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/jquery.cookies.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/jquery-ui-1.10.3.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/bootstrap-timepicker.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/bootstrap-wizard.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/select2.min.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/jquery.validate.min.js"></script>
+    
+    <script src="<?php echo $this->baseUrl();?>/public/admin/js/custom.js"></script>
+    
+    <script>
+    
+    jQuery(document).ready(function(){
+    
+        
+    
+        "use strict";
+      jQuery('#basicWizard').bootstrapWizard();
+      
+      // Progress Wizard
+      $('#progressWizard').bootstrapWizard({
+        'nextSelector': '.next',
+        'previousSelector': '.previous',
+        onNext: function(tab, navigation, index) {
+          var $total = navigation.find('li').length;
+          var $current = index+1;
+          var $percent = ($current/$total) * 100;
+          jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+        },
+        onPrevious: function(tab, navigation, index) {
+          var $total = navigation.find('li').length;
+          var $current = index+1;
+          var $percent = ($current/$total) * 100;
+          jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+        },
+        onTabShow: function(tab, navigation, index) {
+          var $total = navigation.find('li').length;
+          var $current = index+1;
+          var $percent = ($current/$total) * 100;
+          jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+        }
+      });
+      
+      // Disabled Tab Click Wizard
+      jQuery('#disabledTabWizard').bootstrapWizard({
+        tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+        onTabClick: function(tab, navigation, index) {
+          return false;
+        }
+      });
+      
+      // With Form Validation Wizard
+      var $validator = jQuery("#firstForm").validate({
+        highlight: function(element) {
+          jQuery(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function(element) {
+          jQuery(element).closest('.form-group').removeClass('has-error');
+        }
+      });
+      
+      jQuery('#validationWizard').bootstrapWizard({
+        tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+        onTabClick: function(tab, navigation, index) {
+          return false;
+        },
+        onNext: function(tab, navigation, index) {
+          var $valid = jQuery('#firstForm').valid();
+          if(!$valid) {
+            
+            $validator.focusInvalid();
+            return false;
+          }
+        }
+      });
+      
+      jQuery(".select2").select2({
+        width: '100%',
+        minimumResultsForSearch: -1
+      });
+      jQuery('.datepicker').datepicker();
+      jQuery('#datepicker-inline').datepicker();
+      jQuery('#datepicker-multiple').datepicker({
+        numberOfMonths: 3,
+        showButtonPanel: true
+      });
+      var spinner = jQuery('#spinner').spinner();
+      spinner.spinner('value', 0);
+    $('.charges').click(function() {
+     var id=$(this).closest('tr').find('.charges').val();
+      var final_amount=$('#final_amount').val();
+     var total=$('.total').val();
+     if($(this).is(':checked')){
+            jQuery.ajax({
+            type:'POST',
+            url:'returndata.php',
+            data:'id='+id+'&final_amount='+final_amount+'&total='+total+'&part=charges_calculation',
+            dataType:'html',
+            beforeSend: function(){
+            jQuery('#preloader').show();
+            },
+            success : function (responseData, status, XMLHttpRequest) {
+            jQuery('#preloader').hide();
+            $('.total').replaceWith(responseData);
+            }
+            });
+     } else {
+            jQuery.ajax({
+            type:'POST',
+            url:'returndata.php',
+            data:'id='+id+'&final_amount='+final_amount+'&total='+total+'&part=charges_deduction',
+            dataType:'html',
+            beforeSend: function(){
+            jQuery('#preloader').show();
+            },
+            success : function (responseData, status, XMLHttpRequest) {
+            jQuery('#preloader').hide();
+            $('.total').replaceWith(responseData);
+            }
+            });
+     }
+    
+    });
+    });
+    
+    </script>
+    
+</head>
+<body>
+
+<?php
+// server should keep session data for AT LEAST 1 hour
+//ini_set('session.gc_maxlifetime', 3600);
+
+// each client should remember their session id for EXACTLY 1 hour
+//session_set_cookie_params(3600);
+
+//session_start(); // ready to go!
+
+//admin session object create
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+$user_id = $recods['user_id'];
+
+function getUserPhoto($user_id, $url){
+	if ($user_id !=''){
+		$mySQL = "";
+		$mySQL = "SELECT userphoto FROM `user` WHERE user_id = '".$user_id."'";
+		//echo '1 = ' . $mySQL;
+		//die();
+		$rsTemp = Zend_Registry::get("db")->fetchrow($mySQL);
+    
+		if($rsTemp){ 
+			//foreach($rsTemp as $rsVal){
+				$uimg = getcwd().'/public/userimages/'.$rsTemp['userphoto'];
+				if(file_exists($uimg)){
+					return $url.'/public/userimages/'.$rsTemp['userphoto'];
+				} else {
+					return $url.'/public/admin/images/loggeduser.png';	
+				}
+			//}
+		} else {
+			return $url.'/public/admin/images/loggeduser.png';
+		}
+	} else {
+		return $url.'/public/admin/images/loggeduser.png';
+	}	
+}
+?>
+
+<section>
+
+  <div class="leftpanel">
+
+    <div class="logopanel">
+        <h1 style="font-size:25px;"><a href="#" style="text-decoration:none;"><span>Dashboard</span></a></h1>
+    </div><!-- logopanel -->
+
+    <div class="leftpanelinner">
+
+        <!-- This is only visible to small devices -->
+        <div class="visible-xs hidden-sm hidden-md hidden-lg">
+            <div class="media userlogged">
+                <img alt="" src="<?php echo getUserPhoto($user_id, $this->baseUrl());?>" class="media-object">
+                <div class="media-body">
+                    <h4>User Account</h4>
+                    
+                </div>
+            </div>
+
+            <h5 class="sidebartitle actitle">Account</h5>
+            <ul class="nav nav-pills nav-stacked nav-bracket mb30">     <li><a href="<?php echo $this->baseUrl();?>/admin/change-password"><i class="fa fa-user"></i> <span>Change Password</span></a></li>
+            <li><a href=""><i class="fa fa-sign-out"></i> <span>Sign Out</span></a></li>
+            </ul>
+        </div>
+
+      <h5 class="sidebartitle"></h5>
+      <ul class="nav nav-pills nav-stacked nav-bracket">
+<li class="active" ><a href="<?php echo $this->baseUrl();?>/admin/home"><i class="fa fa-home"></i> <span>Home</span></a></li>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li class=""><a href="<?php echo $this->baseUrl();?>/admin/user"><i class="fa fa-user"></i> <span>Manage Users</span></a></li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1 || $usertype == 2){?>
+<li class="">
+	<a href="#"><i class="fa fa fa-edit"></i> <span>Manage Posts</span></a>
+	<ul>
+    	<li style="list-style:none;">
+        <a href="<?php echo $this->baseUrl();?>/admin/post/add"><i class="fa fa fa-edit"></i> <span>Add Posts</span></a>
+        </li>
+        <li style="list-style:none;">
+        <a href="<?php echo $this->baseUrl();?>/admin/post"><i class="fa fa fa-list"></i> <span>Manage Posts</span></a>
+        </li>
+        <?php if($usertype == 0 || $usertype == 1){?>
+            <li style="list-style:none;">
+            <a href="<?php echo $this->baseUrl();?>/admin/postpriority"><i class="fa fa fa-list"></i> <span>Set Posts Priority</span></a></li>
+        <?php }?>
+    </ul>
+</li>
+<?php }?>
+
+<?php if($usertype == 0 || $usertype == 1){?>
+    <li class="">
+        <a href="#"><i class="fa fa fa-edit"></i> <span>Manage Meta Content</span></a>
+        <ul>
+            <li style="list-style:none;">
+            <a href="<?php echo $this->baseUrl();?>/admin/contentmeta"><i class="fa fa fa-edit"></i> <span>Post Meta Content</span></a>
+            </li>
+            <li style="list-style:none;">
+            <a href="<?php echo $this->baseUrl();?>/admin/pagemetacontent"><i class="fa fa fa-edit"></i> <span>Page Meta Content</span></a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="">
+        <a href="#"><i class="fa fa fa-edit"></i> <span>Manage Ads</span></a>
+        <ul>
+            <li style="list-style:none;">
+                <a href="<?php echo $this->baseUrl();?>/admin/adcategory/add"><i class="fa fa fa-edit"></i> <span>Add Category</span></a>
+            </li>
+            <li style="list-style:none;">
+                <a href="<?php echo $this->baseUrl();?>/admin/adcategory/"><i class="fa fa fa-list"></i> <span>Category List</span></a>
+            </li>
+            <li style="list-style:none;">
+                <a href="<?php echo $this->baseUrl();?>/admin/advertisment/add"><i class="fa fa fa-edit"></i> <span>Add Advertisment</span></a>
+            </li>
+            <li style="list-style:none;">
+                <a href="<?php echo $this->baseUrl();?>/admin/advertisment/"><i class="fa fa fa-list"></i> <span>Advertisment List</span></a>
+            </li>
+        </ul>
+    </li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li class=""><a href="<?php echo $this->baseUrl();?>/admin/breaking"><i class="fa fa fa-edit"></i> <span>Manage Breaking News</span></a></li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li class=""><a href="<?php echo $this->baseUrl();?>/admin/comment"><i class="fa fa fa-edit"></i> <span>Manage Comments</span></a></li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li ><a href="<?php echo $this->baseUrl();?>/admin/statecity"><i class="fa fa-map-signs"></i> <span>Manage State,City & Block</span></a></li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li ><a href="<?php echo $this->baseUrl();?>/admin/category"><i class="fa fa-users"></i> <span>Manage Category</span></a></li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li ><a href="<?php echo $this->baseUrl();?>/admin/domain"><i class="fa fa-users"></i> <span>Manage Domains</span></a></li>
+<?php }?>
+<?php if($usertype == 0 || $usertype == 1){?>
+<li ><a href="<?php echo $this->baseUrl();?>/admin/content"><i class="fa fa-edit"></i> <span>Manage Site Content</span></a></li>
+<li ><a href="<?php echo $this->baseUrl();?>/admin/socialmedia"><i class="fa fa-users"></i> <span>Manage Social Media</span></a></li>
+<?php }?>
+</ul>
+
+      <!-- infosummary -->
+
+    </div><!-- leftpanelinner -->
+  </div><!-- leftpanel -->
+
+  <div class="mainpanel">
+
+    <div class="headerbar">
+
+      <a class="menutoggle"><i class="fa fa-bars"></i></a>
+
+
+      <div class="header-right">
+        <ul class="headermenu">
+        <li>
+         <div class="btn-group">
+              <button class="btn btn-default dropdown-toggle tp-icon" data-toggle="dropdown">
+                <i class="fa fa-clock-o"></i>
+
+            
+				<?php echo date('d M Y');?>
+
+ 
+
+
+              </button></div></li>
+        <li>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <img src="<?php echo getUserPhoto($user_id, $this->baseUrl());?>" alt="" />
+             Welcome, <?php echo $recods['first_name']; ?>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+                <li><a href="change-password.html"><i class="glyphicon glyphicon-user"></i> Change Password</a></li>
+               
+                <li><a href="<?php echo $this->baseUrl();?>/admin/index/logout"><i class="glyphicon glyphicon-log-out"></i> Log Out</a></li>
+              </ul>
+            </div>
+          </li>
+        
+        </ul>
+      </div><!-- header-right -->
+
+    </div><!-- headerbar -->
+
+    
+ 
+        
+

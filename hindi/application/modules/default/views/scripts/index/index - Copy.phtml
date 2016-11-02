@@ -1,0 +1,107 @@
+<?php
+$host = $_SERVER['HTTP_HOST'];
+function GetBetween1($var1="",$var2="",$pool){
+	$temp1 = strpos($pool,$var1)+strlen($var1);
+	$result = substr($pool,$temp1,strlen($pool));
+	$dd=strpos($result,$var2);
+	if($dd == 0){
+		$dd = strlen($result);
+	}
+	return substr($result,0,$dd);
+}
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$city = 'gaya';
+} else {
+	$city = GetBetween1("live",".","$host");
+}
+?>
+   <!-- BLOCKWISE POST -->	
+    <?php
+    //$query = "";
+    //$query .= "SELECT DISTINCT `location_id`, `block_name` FROM `post` WHERE `city` = '$city' AND `status` = '1'";
+    //$query .= " AND block_name IN (SELECT block_name FROM post WHERE `status` = '1' ORDER BY block_name)";
+    //$query .= " AND block_name IN (SELECT block_name FROM location ORDER BY sort)";
+    $query = "";
+    $query = " SELECT location_id, block_name FROM location WHERE `city` = '$city' AND location_id IN (SELECT location_id FROM post WHERE `status` = '1') ORDER BY sort";
+    //echo $query;die();
+    $res = Zend_Registry::get("db")->fetchAll($query);
+    if($res){foreach($res as $val){
+        $location_id = $val['location_id'];
+        $blockname = $val['block_name'];
+    ?>
+        <h3 class="section-head prominent"><?php echo $val['block_name'];?></h3>
+    <?php
+        /* $query = "SELECT post_id, headline, image, thumb_image, english_url, CONCAT(SUBSTRING_INDEX(intro, ' ', 10), '...') AS intro FROM `post` WHERE `city` = '$city' AND `block_name` = '$blockname' AND `status` = '1' order by post_id desc LIMIT 4"; */ 
+        $query = "SELECT post_id, headline, image, thumb_image, english_url, CONCAT(SUBSTRING_INDEX(intro, ' ', 10), '...') AS intro FROM `post` WHERE `location_id` = '$location_id' AND `status` = '1' order by post_id desc LIMIT 4";
+		/* if( isset($_GET['tester'])){
+		echo $query;
+		} */
+        //echo $query;die();
+        $res1 = Zend_Registry::get("db")->fetchAll($query);
+        if($res1){$val2 = ""; foreach($res1 as $val2){
+    ?>
+
+            <?php //echo 'DDDDD = ' . file_exists($this->baseUrl().'/public/products/image/'.$val2['thumb_image']);?>
+
+            <div class="col-6" style="padding-left:0px;">
+
+                <section class="author-info" style="padding:5px;">
+
+                    <?php $cityImgPath = getcwd().'/public/products/image/'.$val2['thumb_image'];?>
+
+                    <?php //echo $host . '==== '.$cityImgPath;?>
+
+                    <a href="<?php echo $this->baseUrl().'/postdetail/index/id/'.$val2['post_id'].'/'.$val2['english_url'];?>" target="_blank">
+
+                    <?php if(file_exists($cityImgPath)){?>
+
+                    <img  src="<?php echo $this->baseUrl();?>/public/products/image/<?php echo $val2['thumb_image'];?>" class="img imagebg avatar avatar-100 photo no-display appear" style="width:100px; min-height:80px; max-height:90px;">			
+
+                    <?php } else {?>
+
+                    <img src="<?php echo $this->baseUrl();?>/public/images/comingsoon.jpg" class="img imagebg image wp-post-image no-display appear" itemprop="image" style="width:100px; min-height:80px; max-height:90px;">
+
+                    <?php } ?>
+
+                    </a>
+
+                    <div class="description">
+
+
+
+                        <a class="textheading" href="<?php echo $this->baseUrl().'/postdetail/index/id/'.$val2['post_id'].'/'.$val2['english_url'];?>" target="_blank"><?php echo insertReplacementTag($val2['headline']);?></a>				
+
+
+
+                        <p class="bio"><?php echo insertReplacementTag($val2['intro']);?></p>
+
+
+
+                    </div>
+
+
+
+                </section>
+
+
+
+            </div> 
+
+
+
+        <?php }}?>
+
+
+
+        <div style="clear:both"></div>
+
+
+
+        <p style=" text-align:right;"><a class="textheading" href="<?php echo $this->baseUrl().'/blockwisenews/index/prakhand/'.$val['location_id'].'/'.trim($val['block_name']);?>" target="_blank"><strong>और पढ़ें →</strong></a></p>
+
+
+
+    <?php }}?>
+
+    <!-- / BLOCKWISE POST -->
+

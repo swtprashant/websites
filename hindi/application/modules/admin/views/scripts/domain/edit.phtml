@@ -1,0 +1,188 @@
+
+	<!-- / PHOTO PREVIEW -->
+    <script type="text/javascript">//<![CDATA[ 
+        $(window).load(function () {
+            function readPhotoURL(input) {
+                //alert(input.files[0].size);
+                if (input.files[0].size > 200000) {
+                    alert('Please LOGO image size maximum 200KB only');
+                    $("#image").val('');
+					//$('#imgPhoto').hide();
+                    return (false);
+                }
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    $('#image').show();
+                    reader.onload = function (e) {
+						$('#imgPhoto').show();
+                        $('#imgPhoto').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image").change(function () {
+                var imgName = $("#image").val();
+                var sptImgName;
+                var extImageName;
+                if ($.browser.mozilla == false) {
+                    sptImgName = imgName.split("\\");
+                    extImageName = sptImgName[2].split('.');
+
+                } else {
+                    sptImgName = imgName;
+                    extImageName = sptImgName.split('.');
+                }
+
+                var getExt = extImageName[1];
+                if (getExt != 'jpg' && getExt != 'jpeg' && getExt != 'png' && getExt != 'gif') {
+                    alert('Please upload JPG, JPEG, PNG, GIF file in Photo of the post.');
+                    $('#image').val('');
+					//$('#imgPhoto').hide();
+                    return (false);
+                } //else { //$('#imgPhoto').show(); }
+
+                if ($.browser.chrome || $.browser.mozilla) {
+                    readPhotoURL(this);
+                } else if ($.browser.msie) {
+                    $('#imgPhoto').show();
+                    document.getElementById('imgPhoto').src = $("#txtphoto").val();
+                }
+            });
+        });//]]>  
+    </script>
+    <!-- / PHOTO PREVIEW -->
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Edit Domain</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/domain/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+          <form enctype="multipart/form-data" method="post" action="<?php echo $this->baseUrl();?>/admin/domain/edit/id/<?php echo $this->data['domain_id'];?>" class="form-horizontal form-bordered">
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Domain In Hindi</label>
+              <div class="col-sm-9">
+                <input type="text" name="domain_hindi" id="domain_hindi" value="<?php echo $this->data['domain_hindi'];?>" maxlength="100" placeholder="Enter Domain In Hindi" class="form-control" />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Domain In English</label>
+              <div class="col-sm-9">
+                <input type="text" name="domain_english" id="domain_english" value="<?php echo $this->data['domain_english'];?>" maxlength="50" placeholder="Enter Domain In English" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">City</label>
+              <div class="col-sm-9">
+                <input type="text" name="city" id="city" value="<?php echo $this->data['city'];?>" maxlength="100" placeholder="City" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Facebook URL</label>
+              <div class="col-sm-9">
+                <input type="text" name="facebookURL" id="facebookURL" value="<?php echo $this->data['facebookURL'];?>" maxlength="1000" placeholder="Enter facebook URL" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Twitter URL</label>
+              <div class="col-sm-9">
+                <input type="text" name="twitterURL" id="twitterURL" value="<?php echo $this->data['twitterURL'];?>" maxlength="1000" placeholder="Enter twitter URL" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Google Analytic Tracking Id</label>
+              <div class="col-sm-9">
+                <input type="text" name="googleAnalyticTrackingId" id="googleAnalyticTrackingId" value="<?php echo $this->data['googleAnalyticTrackingId'];?>" maxlength="100" placeholder="Enter Google Analytic Tracking Id" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Google AdSense Account</label>
+              <div class="col-sm-9">
+                <input type="text" name="googleAdSenseAccount" id="googleAdSenseAccount" value="<?php echo $this->data['googleAdSenseAccount'];?>" maxlength="100" placeholder="Enter Google AdSense Account" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Google Site Verification</label>
+              <div class="col-sm-9">
+                <input type="text" name="googleSiteVerification" id="googleSiteVerification" value="<?php echo $this->data['googleSiteVerification'];?>" maxlength="100" placeholder="Enter Google Site Verification" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Contact</label>
+              <div class="col-sm-9">
+                <input type="text" name="Contact" id="Contact" value="<?php echo $this->data['Contact'];?>" maxlength="1000" placeholder="Enter Contact" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Meta Description</label>
+              <div class="col-sm-9">
+                <input type="text" name="metaDescription" id="metaDescription" value="<?php echo $this->data['metaDescription'];?>" maxlength="165" placeholder="Enter Meta Description" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Meta Keywords</label>
+              <div class="col-sm-9">
+                <input type="text" name="metaKeywords" id="metaKeywords" value="<?php echo $this->data['metaKeywords'];?>" maxlength="65" placeholder="Enter Meta Keywords" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Meta News Keywords</label>
+              <div class="col-sm-9">
+                <input type="text" name="metaNewsKeywords" id="metaNewsKeywords" value="<?php echo $this->data['metaNewsKeywords'];?>" maxlength="250" placeholder="Enter Meta News Keywords" class="form-control" />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Meta Abstract</label>
+              <div class="col-sm-9">
+                <input type="text" name="metaAbstract" id="metaAbstract" value="<?php echo $this->data['metaAbstract'];?>" maxlength="250" placeholder="Enter Meta Abstract" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="disabledinput">फोटो लगाएं</label>
+                <div class="col-sm-6">
+                    <input type="hidden" name="imageOld" value="<?php echo $this->data['logoImage']; ?>" />
+                    <input type="file" name="image" id="image" class="form-control"  />
+                    <span id="lblError2" style="color: red;"></span>
+                    <?php //echo $this->data['logoImagePath']; ?>
+                    <?php //if($this->data['logoImage'] != "") { ?>
+                    <!--<img src="<?php //echo $this->baseUrl().'/public/products/image/thumb/'.$this->data['thumb_image']; ?>" width="50" align="absmiddle" />--><?php //echo $this->data['thumbImagePath']; ?>
+                    <!--<img id="imgPhoto" src="<?php //echo $this->baseUrl();?>/public/admin/images/Blank.png" style="display:none;height:100px;width:150px;">-->
+                    <img id="imgPhoto" src="<?php echo $this->baseUrl(). $this->data['logoImagePath']; ?>" style="width:150px;" align="absmiddle" />
+					<?php //} ?>
+                </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Status</label>
+              <div class="col-sm-6"><?php //echo $this->data['status'];?>
+              	<select name="status" id="status" class="select2">
+                	<option value="0" <?php if ($this->data['status'] == '0') echo 'selected';?>>Inactive</option>
+                    <option value="1" <?php if ($this->data['status'] == '1') echo 'selected';?>>Active</option>
+                </select>
+              </div>
+            </div>
+            
+            
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Update</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+        
+      </div><!-- panel -->

@@ -1,0 +1,291 @@
+<?php
+$_SESSION['timeout'] = 60;
+	
+
+include_once('public/fckeditor/fckeditor.php');
+
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+
+$recods = $obj->getAdminByUser($adminsession->username);
+$city = $recods['city'];
+$usertype = $recods['user_type'];
+
+function selectedCatgories($post_id, $category_id){
+	if ($post_id != ''){
+		$category_name = '';
+		$sql = "";
+		$sql = "SELECT category_name FROM `post_category` WHERE `post_id` = '".$post_id."' AND category_id = ".$category_id;
+		//echo $sql; 
+		$rsCat = Zend_Registry::get("db")->fetchAll($sql);	
+		if($rsCat){ foreach($rsCat as $resCat){
+			$category_name = $resCat['category_name'];
+		}}
+		return $category_name;
+	}
+}
+?>
+
+	<script type="text/javascript">
+	$(document).ready(function() {
+			$("#city").change(function() {
+			//alert($(this).val());
+			url = '<?php echo $this->baseUrl();?>/admin/post/ajaxcall?city='+$(this).val();
+			//alert(url);
+			$.get(url, function(data) {
+				$("#location_id").html(data);
+			});
+		});
+
+	});
+	function getPrakhand(location_Id) {
+		//$("#city").val();
+		//alert('location_Id = ' + location_Id);
+		//alert('pid = ' + $('#pid').val());
+		//$('#location_id1').hide();
+			
+		url = '<?php echo $this->baseUrl();?>/admin/post/ajaxcall?city='+$("#city").val()+'&pid='+$("#pid").val()+'&location_Id='+location_Id;
+		//alert(url);
+		$.get(url, function(data) {
+			//$("#spnBlock").html(data);
+			$("#location_id").html(data);
+		});
+	}
+	</script>
+
+	<!-- DATE PICKER -->
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+	<!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery-ui.js"></script>
+    <script src="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.js"></script>
+    <link href="<?php echo $this->baseUrl();?>/public/datepicker/jquery.timepicker.css" rel="stylesheet" />
+    <script>
+	$(function() {
+    	$( "#scheduleDate" ).datepicker({ 
+			minDate: -0, 
+			maxDate: "+10D", 
+			dateFormat: 'yy-m-d'
+         });
+  	
+		$('#scheduleTime').timepicker();
+    });
+    </script>
+    <!-- / DATE PICKER -->
+
+	<!-- / PHOTO PREVIEW -->
+    <script type="text/javascript">//<![CDATA[ 
+        $(window).load(function () {
+            function readPhotoURL(input) {
+                //alert(input.files[0].size);
+                if (input.files[0].size > 2097152) {
+                    alert('Please photo image size maximum 2mb only');
+                    $("#image").val('');
+					//$('#imgPhoto').hide();
+                    return (false);
+                }
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    $('#image').show();
+                    reader.onload = function (e) {
+						$('#imgPhoto').show();
+                        $('#imgPhoto').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image").change(function () {
+                var imgName = $("#image").val();
+                var sptImgName;
+                var extImageName;
+                if ($.browser.mozilla == false) {
+                    sptImgName = imgName.split("\\");
+                    extImageName = sptImgName[2].split('.');
+
+                } else {
+                    sptImgName = imgName;
+                    extImageName = sptImgName.split('.');
+                }
+
+                var getExt = extImageName[1];
+                if (getExt != 'jpg' && getExt != 'jpeg') {
+                    alert('Please upload JPG, JPEG file in Photo of the post.');
+                    $('#image').val('');
+					//$('#imgPhoto').hide();
+                    return (false);
+                } //else { //$('#imgPhoto').show(); }
+
+                if ($.browser.chrome || $.browser.mozilla) {
+                    readPhotoURL(this);
+                } else if ($.browser.msie) {
+                    $('#imgPhoto').show();
+                    document.getElementById('imgPhoto').src = $("#txtphoto").val();
+                }
+            });
+        });//]]>  
+    </script>
+    <!-- / PHOTO PREVIEW -->
+    
+    <script type="text/javascript">
+	function sendData(isClick)
+	{
+		if(isClick == "Y"){
+			var image = $('#image').val();
+			var imagetitle = $('#imagetitle').val();
+			
+			if (image == '')
+			{
+				alert('Please select upload image')
+				$('#image').focus();
+				return (false)	
+			}
+			if (imagetitle == '')
+			{
+				alert('Please enter image title')
+				$('#imagetitle').focus();
+				return (false)	
+			}
+		}
+		
+		var data = new FormData($('#frmpost')[0]);
+		$.ajax({
+			type:"POST",
+			url:"<?php echo $this->baseUrl();?>/admin/gallery/ajaxmediaupload",
+			data:data,
+			mimeType: "multipart/form-data",
+			contentType: false,
+			cache: false,
+			processData: false,
+			success:function(data)
+			{
+				//alert(data);
+				$("#preview").html(data);
+				$('#image').val(null);
+				$('#imagetitle').val(null);
+		
+			}
+		});
+	}
+	</script>
+    
+    <?php
+	$GLOBALS['baseUrl'] = $this->baseUrl();
+	
+	$idgallery = $this->data['idgallery'];
+	
+	$title = '';
+	if(!empty($_POST['gallerytitle'])) {
+		$title = $_POST['gallerytitle'];	
+	} else {
+		$title = $this->data['title'];	
+	}
+	$englishurl = '';
+	if(!empty($_POST['englishurl'])) {
+		$englishurl = $_POST['englishurl'];	
+	} else {
+		$englishurl = $this->data['englishurl'];	
+	}
+	$metatitle = '';
+	if(!empty($_POST['metatitle'])) {
+		$metatitle = $_POST['metatitle'];	
+	} else {
+		$metatitle = $this->data['metatitle'];	
+	}
+	$metakeyword = '';
+	if(!empty($_POST['metakeyword'])) {
+		$metakeyword = $_POST['metakeyword'];	
+	} else {
+		$metakeyword = $this->data['metakeyword'];	
+	}
+	$metadescription = '';
+	if(!empty($_POST['metadescription'])) {
+		$metadescription = $_POST['metadescription'];	
+	} else {
+		$metadescription = $this->data['metadescription'];	
+	}
+	?>
+    <div class="pageheader">
+        <h2><i class="fa fa-home"></i>Edit Gallery</h2>
+        <div class="breadcrumb-wrapper">
+            <ol class="breadcrumb">
+                <li><a href="<?php echo $this->baseUrl();?>/admin/gallery/"><strong>Back</strong></a></li>
+            </ol>
+        </div>
+    </div>
+	<form name="frmpost" id="frmpost" method="post" action="<?php echo $this->baseUrl();?>/admin/gallery/edit/id/<?php echo $this->data['idgallery'];?>">
+        <div class="form-group">
+        	<div class="col-sm-8">    
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Gallery Title</label>
+                  <div class="col-sm-8">
+                    <input type="text" placeholder="Enter Title" id="gallerytitle" name="gallerytitle" value="<?php echo $title;?>" class="form-control" maxlength="100" />
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['title'])){ echo $this->error['title'];}?></span></div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  	<label class="col-sm-4 control-label">English URL</label>
+                  	<div class="col-sm-8">
+                 		<input type="text" placeholder="Enter English URL" id="englishurl" name="englishurl" value="<?php echo $englishurl;?>" class="form-control" maxlength="60" />
+                 		<div class="error_container"><span class="error"><?php if(!empty($this->error['englishurl'])){ echo $this->error['englishurl'];}?></span></div>
+                  	</div>
+                </div>
+                <div class="form-group">
+                <label class="col-sm-4 control-label">Meta Title</label>
+                  <div class="col-sm-8">
+                    <input type="text" placeholder="Enter Meta title" id="metatitle" name="metatitle" value="<?php echo $metatitle;?>" class="form-control" maxlength="60" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Meta Keyword</label>
+                  <div class="col-sm-8">
+                    <textarea class="form-control" id="metakeyword" name="metakeyword" rows="5" ><?php echo $metakeyword;?></textarea>
+                  </div>
+               </div>
+                
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Meta Description</label>
+                  <div class="col-sm-8">
+                    <textarea class="form-control" id="metadescription" name="metadescription" rows="5" ><?php echo $metadescription;?></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                	<label class="col-sm-4 control-label"></label>
+                    <div class="col-sm-8">
+                    	<button class="btn btn-primary" id="submit" onclick="return validate()">Submit</button>&nbsp;
+				 		 <button class="btn btn-default">Cancel</button>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                	<label class="col-sm-4 control-label">Upload Image</label>
+                    <div class="col-sm-8">
+                    	<input class="form-control" type="file" name="image" id="image" />
+                        <div style="color:#FF0000;">width:730px, Height:335px</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                	<label class="col-sm-4 control-label">Image Title</label>
+                    <div class="col-sm-8">
+                    	<input class="form-control" type="text" name="imagetitle" id="imagetitle" maxlength="100" />
+                    </div>
+                </div>
+                <div class="form-group">
+                	<label class="col-sm-4 control-label"></label>
+                    <div class="col-sm-8">
+                    	<input type="button" value="Upload" onclick = "return sendData('Y')" />
+                    </div>
+                </div>
+                <div class="form-group">
+                	<div class="col-sm-12" id='preview' style="overflow:auto; max-height:600px;"></div>
+                </div> 
+                <input type="hidden" id="idgallery" name="idgallery" value="<?php echo $idgallery;?>" />
+                <script>
+				sendData();
+				</script>
+            </div>
+      	</div>
+    <!-- panel-footer -->
+    </form>

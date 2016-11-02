@@ -1,0 +1,37 @@
+<?php
+echo $this->render('header.phtml');
+?>  <?php
+echo getPriority();
+?> <div class=main-content><div class=container><div class=row><div class=col-md-8>
+<!-- commented as email by CyberMedia on Sept 12, 2016 - email subject: Contact Update!
+<div id=hideonmobile style="text-align:center;margin:20px 0"> <?php //echo getAds(1, 1)
+?> <script async src=//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script><ins class=adsbygoogle data-ad-client=ca-pub-7910693805653243 data-ad-slot=9926359013 style=display:block data-ad-format=link></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div>
+-->
+<div style="margin:0 0;border:0 solid red"> <?php
+echo $this->layout()->content;
+?> </div> <?php //echo getGallery();
+?> </div><div class=col-md-4>
+<!-- commented as email by CyberMedia on Sept 12, 2016 - email subject: Contact Update!
+<div style="text-align:center;margin:20px 0"><script async src=//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script><ins class=adsbygoogle data-ad-client=ca-pub-7910693805653243 data-ad-slot=9786758217 style=display:inline-block;width:336px;height:280px></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div>
+-->
+<div class="right-sidebar side-bar sidebar"> <?php
+echo getRightBodyCategoryWisePost('Right Column', "Must Read");
+?> <?php
+echo getRightBodyCategoryWisePost('Right Column', "Live News");
+?> <?php
+echo getRightBodyCategoryWisePost('Right Column', "OMG");
+?> <?php
+echo getRightBodyCategoryWisePost('Right Column', "She Corner");
+?> <?php
+echo getRightBodyCategoryWisePost('Right Column', "Indepth");
+?><?php
+echo getRightBodyCategoryWisePost('Right Column', "Teen World");
+?> <div class="facebook-widget widget"id=hideonmobile><div class="pink-border section-title"><h2>Social Media</h2><small></small></div><div class=cp-sidebar-content><div id=fb-root></div><script>!function(e,n,t){var o,c=e.getElementsByTagName(n)[0];e.getElementById(t)||(o=e.createElement(n),o.id=t,o.src="//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=133982306765662",c.parentNode.insertBefore(o,c))}(document,"script","facebook-jssdk")</script><div class=fb-page data-adapt-container-width=true data-height=520px data-hide-cover=false data-href="<?php
+echo $GLOBALS['facebookURL'];
+?>"data-show-facepile=true data-show-posts=true data-small-header=no><div class=fb-xfbml-parse-ignore><blockquote cite=<?php
+echo $GLOBALS['facebookURL'];
+?>><a href=<?php
+echo $GLOBALS['facebookURL'];
+?>>Live India</a></blockquote></div></div></div></div><div class="facebook-widget widget"id=hideonmobile style=margin-bottom:30px><div class=cp-sidebar-content><a href="https://twitter.com/search?q=liveindialive"class=twitter-timeline data-widget-id=752108717903114240>Tweets about liveindialive</a><script>!function(t,e,r){var n,s=t.getElementsByTagName(e)[0],i=/^http:/.test(t.location)?"http":"https";t.getElementById(r)||(n=t.createElement(e),n.id=r,n.src=i+"://platform.twitter.com/widgets.js",s.parentNode.insertBefore(n,s))}(document,"script","twitter-wjs")</script></div></div></div></div></div> <?php
+echo $this->render('footer.phtml');
+?>

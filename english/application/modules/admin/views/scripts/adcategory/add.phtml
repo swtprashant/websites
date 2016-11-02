@@ -1,0 +1,49 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Add Ads Category</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/category/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+     <form class="form-horizontal form-bordered" name="form1" id="form1" action="<?php echo $this->baseUrl();?>/admin/adcategory/add" method="post">
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Category</label>
+              <div class="col-sm-6">
+                <input type="text" id="adcategory" name="adcategory" value="<?php //echo $adcategory;?>" placeholder="Enter Category" class="form-control" />
+                <div class="error_container"><span class="error"><?php if(!empty($this->error['adcategory'])){ echo $this->error['adcategory'];}?></span></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Status</label>
+              <div class="col-sm-2">
+                <select name="isActive" id="isActive" class="select2">
+                	<option value="">Select</option>
+                    <option value="0">Inactive</option>
+                    <option value="1">Active</option>
+                </select>
+                <div class="error_container"><span class="error"><?php if(!empty($this->error['isActive'])){ echo $this->error['isActive'];}?></span></div>
+              </div>
+            </div>
+            
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Submit</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+                </form>
+			 </div>
+		  </div><!-- panel-footer -->
+        
+      </div><!-- panel -->

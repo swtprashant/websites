@@ -1,0 +1,80 @@
+<script type="text/javascript">
+	function deletePost(post_id){
+		var iAgree = confirm("You are sure want to delete?.")
+		if (iAgree == true){
+			document.location.href="<?php echo $this->baseUrl();?>/admin/breaking/delete/id/" + post_id;
+			return(true);
+		} else {
+			return (false);
+		}
+	}
+</script>
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Manage Breaking News</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/breaking/add"><strong>+ Add</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+<div class="info_container"><span class="info_text">
+<?php if(!empty($this->messages[0])){ echo $this->messages[0];}?>
+</span></div>
+
+  <div class="contentpanel">
+    
+     
+      <div class="row">
+     <div class="col-md-12">
+     <form name="frmdomain" id="frmdomain" method="post" action="<?php echo $this->baseUrl();?>/admin/breaking/add">
+           <table class="table table-success mb30">
+                    <thead>
+                      <tr>
+                        <th width="20">#</th>
+                      <th width="200">Breaking News</th>
+                    <th width="250">URL</th>
+                    <th width="81">Date</th>
+                     <!-- <th width="78">Status</th>-->
+                       <th width="30">Action</th>
+                      </tr>
+                    </thead>
+                    <?php
+				  $i = 0;
+				  if($this->data){
+				  foreach($this->data as $val){
+					  ?>
+                    <tbody>
+                      <tr>
+                        <td><?php $i++;echo $i;?>.</td>
+                       <td><?php echo $val['breakingnews'];?></td>
+                       <td><?php echo $val['url'];?></td>
+                       <td><?php echo $val['created'];?></td>
+                       <!--<td><a class="btn btn-danger btn-xs btn-primary">Pending</a></td>-->
+                       <td><!--<a href="#" title="view"><i class="fa fa-search"></i></a>&nbsp;&nbsp;-->
+                       <a href="<?php echo $this->baseUrl();?>/admin/breaking/edit/id/<?php echo $val['breaking_id'];?>" title="Edit"><i class="fa fa-edit textblue"></i></a>&nbsp;&nbsp;
+                       <a href="javascript:void(0)" onclick="deletePost('<?php echo $val['breaking_id'];?>')" id="delPost" title="Delete This?"><i class="fa fa-trash-o textred"></i></a>
+                       </td>
+                      </tr>
+                    <?php } }?>  
+                  </tbody>
+                </table>
+        </form>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

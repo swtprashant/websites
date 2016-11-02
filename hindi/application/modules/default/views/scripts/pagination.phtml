@@ -1,0 +1,65 @@
+<?php
+$params = Zend_Controller_Front::getInstance()->getRequest()->getParams();
+    //remove the system parameters, $this->url will put them back
+    unset($params['module']);
+    unset($params['controller']);
+    unset($params['action']);
+?>
+
+
+<?php if ($this->pageCount): ?>
+     <div>
+         <ul class="pagination">
+             <!-- Previous page link -->
+             <?php if (isset($this->previous)): ?>
+                 <li>
+                 	 <a href="<?php echo $this->url(array_merge($params,array('page'=>$this->previous)));?>"><<</a>	
+                     <!--<a href="<?php //echo $this->url(); ?>?page=<?php //echo $this->previous; ?>">
+                         <<
+                     </a>-->
+                 </li>
+             <?php else: ?>
+                 <li class="disabled">
+                     <a href="javascript:;">
+                         <<
+                     </a>
+                 </li>
+             <?php endif; ?>
+
+             <!-- Numbered page links -->
+             <?php foreach ($this->pagesInRange as $page): ?>
+                 <?php if ($page != $this->current): ?>
+                     <li>
+                     	 <a href="<?php echo $this->url(array_merge($params,array('page'=>$page)));?>">
+                         <!--<a href="<?php //echo $this->url();?>?page=<?php //echo $page; ?>&keyword=<?php //echo $keyword;?>">-->
+                             <?php echo $page; ?>
+                         </a>
+                     </li>
+                 <?php else: ?>
+                     <li class="active">
+                         <a href="javascript:;"><?php echo $page; ?></a>
+                     </li>
+                 <?php endif; ?>
+             <?php endforeach; ?>
+
+             <!-- Next page link -->
+             <?php if (isset($this->next)): ?>
+                 <li>
+                 	 <a href="<?php echo $this->url(array_merge($params,array('page'=>$this->next)));?>">
+                     <!--<a href="<?php //echo $this->url(); ?>?page=<?php //echo $this->next; ?>&keyword=<?php //echo $keyword;?>">-->
+                         >>
+                     </a>
+                 </li>
+             <?php else: ?>
+                 <li class="disabled">
+                     <a href="javascript:;">
+                         >>
+                     </a>
+                 </li>
+             <?php endif; ?>
+         </ul>
+     </div>
+ <?php endif; ?>
+
+
+

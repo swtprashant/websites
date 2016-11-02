@@ -1,0 +1,65 @@
+<?php @extract($_POST);?>
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Add Category</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+          <li><a href="<?php echo $this->baseUrl();?>/admin/categorysub/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+     <form class="form-horizontal form-bordered" name="form1" id="form1" action="<?php echo $this->baseUrl();?>/admin/categorysub/add" method="post" />
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Category</label>
+              <div class="col-sm-6">
+				<?php 
+				if(!empty($this->error['category'])){
+					$category_id = $category_id;
+				} else {
+					$category_id = '';
+				}
+				$query = "SELECT * FROM `category` WHERE status = 1 AND parentId = 0 ORDER BY sort";
+				$res = Zend_Registry::get("db")->fetchAll($query);
+				?>
+					<select class="select2" name="category_id" id="category_id">
+						<option value="">Select</option>
+						<?php if($res){ foreach($res as $val){ ?>
+						<option value="<?php echo $val['category_id'];?>" <?php if($val['category_id']==$category_id){echo 'selected';}?>><?php echo $val['category'];?></option>
+						<?php }}?>
+					</select>
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['category_id'])){ echo $this->error['category_id'];}?></span></div>
+			  </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Sub Category</label>
+                <div class="col-sm-6">
+                	<input type="text" id="category" name="category" placeholder="Enter Sub Category" class="form-control" maxlength="100" />
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['category'])){ echo $this->error['category'];}?></span></div>
+                </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Sort</label>
+              <div class="col-sm-6">
+                <input type="text" id="sort" name="sort" placeholder="Enter Sort Number" class="form-control" maxlength="3" />
+              </div>
+            </div>
+            
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Submit</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+                </form>
+			 </div>
+		  </div><!-- panel-footer -->
+        
+      </div><!-- panel -->

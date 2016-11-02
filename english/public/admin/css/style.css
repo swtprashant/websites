@@ -1,0 +1,65 @@
+/*	===================================================================
+   	RESET
+   	===================================================================   */
+
+.btn1.outlined {
+color: #3675B4;
+border: solid 2px #3675B4;
+border-radius: 3px;
+text-transform: uppercase;
+background: #fff;
+font-size: 18px;
+}
+/*button, html input[type=button], input[type=reset], input[type=submit] {
+-webkit-appearance: button;
+cursor: pointer;
+overflow: visible;
+}*/
+/*.mleft_no {
+margin-left: 0;
+}*/
+.btn1 {
+padding: 10px 20px;
+margin: 15px;
+border: none;
+background: #666;
+color: #ccc;
+font-weight: bold;
+text-decoration: none;
+transition: all 0.35s;
+-moz-transition: all 0.35s;
+-webkit-transition: all 0.35s;
+-o-transition: all 0.35s;
+white-space: nowrap;
+}
+.btn1.outlined:hover {
+color: #fff;
+border: solid 2px #3675B4;
+background: #3675B4;
+box-shadow: none;
+}
+
+.gallery{ width:100%; float:left; margin-top:10px;}
+
+.gallery ul{ margin:0; padding:0; list-style-type:none;}
+
+.gallery ul li{ padding:2px; border:2px solid #ccc; margin:5px 5px; background:none; width:auto; height:auto;}
+
+#reorder-helper{margin: 5px 5px;
+padding: 5px;}
+.light_box {
+background: #efefef;
+padding: 20px;
+margin: 5px 0;
+text-align: center;
+font-size: 1.2em;
+}
+
+/* NOTICE */
+.notice, .notice a{ color: #fff !important; }
+.notice { z-index: 8888; }
+.notice a { font-weight: bold; }
+.notice_error { background: #E46360; }
+.notice_success { background: #657E3F; }
+
+.gallery .img{ width:40px; margin:5px;}

@@ -1,0 +1,45 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Add Breaking News</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/breaking/"><strong>Back</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="contentpanel">
+      
+      <div class="panel panel-default">
+      
+        <div class="panel-body panel-body-nopadding">
+          
+     <form class="form-horizontal form-bordered" name="form1" id="form1" action="<?php echo $this->baseUrl();?>/admin/breaking/add" method="post">
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Breaking News</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter Breaking News" id="breaking_news" name="breaking_news" class="form-control" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">News URL</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter Breaking News URL" id="url" name="url" class="form-control" />
+              </div>
+            </div>     
+            
+                    
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <button class="btn btn-primary">Submit</button>&nbsp;
+				  <button class="btn btn-default">Cancel</button>
+				</div>
+			 </div>
+             </div>
+             </form>
+		  </div><!-- panel-footer -->
+        
+     

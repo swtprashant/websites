@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  
+  <title>Login</title>
+
+  <link href="<?php echo $this->baseUrl();?>/public/admin/css/style.default.css" rel="stylesheet">
+
+  
+</head>
+
+<body class="signin">
+
+
+<section>
+  
+    <div class="signinpanel">
+        
+        <div class="row"><!-- col-sm-7 -->
+            
+            <div class="col-md-12">
+            <div style="text-align:center;">
+            	<img src="<?php echo $this->baseUrl();?>/public/images/logo-micon.png" style="background-color:#FF1489;padding:10px;border-radius:10px;border:5px solid #FFF;">
+            </div>
+                <h3 style="text-align:center; text-transform:uppercase;">LIVE INDIA</h3>
+                
+                <div class="error_container" style="text-align:center;"><span class="error"><?php if(!empty($this->msg)){echo $this->msg;} ?></span></div>
+                <form method="post" action="#">
+                    <h4 class="nomargin">Sign In</h4>
+                    <p class="mt5 mb20">Login to access your account.</p>
+                
+                    <input type="text" name="login" class="form-control uname" placeholder="Email-Id" />
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['login'])){ echo $this->error['login'];}?></span></div>
+                    <input type="password" name="password" class="form-control pword" placeholder="Password" />
+                    <div class="error_container"><span class="error"><?php if(!empty($this->error['password'])){ echo $this->error['password'];}?></span></div>
+                    <a href="#"><small>Forgot Your Password?</small></a>
+                    <button class="btn btn-success btn-block">Sign In</button>
+                    
+                </form>
+            </div><!-- col-sm-5 -->
+            
+        </div><!-- row -->
+        
+        <div class="signup-footer">
+  
+                &copy; 2015. All Rights Reserved. Company Name
+          
+           
+        </div>
+        
+    </div><!-- signin -->
+  
+</section>
+</body>
+</html>

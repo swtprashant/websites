@@ -1,0 +1,77 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i>Manage Domains</h2>
+      <div class="breadcrumb-wrapper">
+    
+        <ol class="breadcrumb">
+         
+          <li><a href="<?php echo $this->baseUrl();?>/admin/domain/add"><strong>+ Add</strong></a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="info_container"><span class="info_text">
+<?php if(!empty($this->messages[0])){ echo $this->messages[0];}?>
+</span></div>
+
+  <div class="contentpanel">
+    
+     
+      <div class="row">
+     <div class="col-md-12">
+     <form name="frmdomain" id="frmdomain" method="post" action="<?php echo $this->baseUrl();?>/admin/domain/add">
+           <table class="table table-success mb30">
+                    <thead>
+                      <tr>
+                        <th width="20">#</th>
+                      	<th width="182">Domain in Hindi</th>
+                    	<th width="186">Domain in English</th>
+                    	<th width="81">City</th>
+                    	<th width="81">Date</th>
+                     	<th width="30">Status</th>
+                       	<th width="43">Action</th>
+                      </tr>
+                    </thead>
+                    <?php
+				  $i = 0;
+				  if($this->data){
+				  foreach($this->data as $val){
+					  	if($val['status'] == 1){
+							$stat =	'<i class="fa fa-check-square-o textgreen" title="Active"></i>'; 
+							//$stat = "<img src='".$this->baseUrl()."/public/admin/images/green_icon.png' width='12' height='12' alt='Activated' border='0' title='Activated'/>";
+						} else {
+							$stat =	'<i class="fa fa-square-o textred" title="Inactive"></i>'; 
+							//$stat = "<img src='".$this->baseUrl()."/public/admin/images/red_icon.png' width='12' height='12' alt='Inactivated' border='0' title='Inactivated'/>";
+						}
+					  ?>
+                    <tbody>
+                      <tr>
+                        <td><?php $i++;echo $i;?>.</td>
+                       <td><?php echo $val['domain_hindi'];?></td>
+                       <td><?php echo $val['domain_english'];?></td>
+                       <td><?php echo $val['city'];?></td>
+                       <td><?php echo $val['created'];?></td>
+                       <td align="center"><a href=""><?php echo $stat;?></a></td>
+                       <td><!--<a href="#" title="view"><i class="fa fa-search"></i></a>&nbsp;&nbsp;-->
+                       <a href="<?php echo $this->baseUrl();?>/admin/domain/edit/id/<?php echo $val['domain_id'];?>" title="Edit"><i class="fa fa-edit textblue"></i></a>
+                       <a href="javascript:void(0)" onclick="deletePost('<?php echo $val['domain_id'];?>')" id="delPost" title="Delete This?"><i class="fa fa-trash-o textred"></i></a>
+                       </td>
+                      </tr>
+                    <?php } }?>  
+                  </tbody>
+                </table>
+        </form>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+  
+
+                      

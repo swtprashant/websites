@@ -1,0 +1,50 @@
+<?php
+$params = Zend_Controller_Front::getInstance()
+                    ->getRequest()->getParams();
+    //remove the system parameters, $this->url will put them back
+    unset($params['module']);
+    unset($params['controller']);
+    unset($params['action']);
+    ?>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" id="pagination-clean">
+  <tr>
+    <td width="44%" align="left" style="text-align:left!important; padding-right:0px!important;" nowrap><?php if(!empty($this->last)){?> <strong>Page</strong> <strong><?= $this->current; ?></strong> of <strong><?= $this->last; ?></strong><? }?></td>
+    <td width="56%" align="right" style="text-align:right!important; padding-right:0px!important;" nowrap="nowrap"><?php if(!empty($this->last)){?> 
+	<?php if (isset($this->previous)): ?>
+            <span class="next">
+               <a href="<?= $this->url() . "?" . http_build_query(array_merge($params , array('page' => $this->previous))); ?>">&lt;&lt;Previous</a> 
+                
+              <!--  <a href="<?//= $this->url(array('page' => $this->previous)); ?>">&lt;&lt;Previous</a> -->
+            
+            </span>
+        <?php else: ?>
+            <span class="previous-off">&lt;&lt;Previous</span>
+        <?php endif; ?>
+        <!-- Numbered page links -->
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+              <span > 
+                  <a href="<?= $this->url() . "?" . http_build_query(array_merge($params , array('page' => $page))); ?>"><?= $page; ?></a>
+              <!--    <a href="<?//= $this->url(array('page' => $page)); ?>"><?= $page; ?></a> -->
+              
+              </span>
+            <?php else: ?>
+               <span class="active"><strong> <?= $page; ?></strong></span>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <!-- Next page link -->
+        <?php if (isset($this->next)): ?>
+             <span class="next">
+                 <a href="<?= $this->url() . "?" . http_build_query(array_merge($params , array('page' => $this->last))); ?>">Next&gt;&gt;</a>
+                 
+             <!--    <a href="<?//= $this->url(array('page' => $this->next)); ?>">Next&gt;&gt;</a> -->
+             
+             </span>
+        <?php else: ?>
+            <span class="next-off">Next &gt;&gt;</span>
+        <?php endif; ?>
+        <!-- Last page link -->
+	  </ul> <? }?>   </td>
+  </tr>
+</table>

@@ -1,0 +1,436 @@
+<?php
+//admin session object create
+$adminsession=new Zend_Session_Namespace('admin');
+$obj = new Default_Model_DbTable_User();
+$recods = $obj->getAdminByUser($adminsession->username);
+$usertype = $recods['user_type'];
+
+$host = $_SERVER['HTTP_HOST'];
+//echo $host;
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+	$city = 'gaya';
+} else {
+	$city = GetBetween($host);
+}
+?>
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i> Dashboard</h2>
+      
+    </div>
+
+    <div class="contentpanel">
+      <style>.table th {
+    font-weight: bold;
+    text-align: center; font-size:18px;
+	}
+	
+	
+</style>
+	<style type='text/css'>
+    table.scroll {
+    /* width: 100%; */ /* Optional */
+    /* border-collapse: collapse; */
+    border-spacing: 0;
+    border: 0px solid black;
+}
+
+table.scroll tbody,
+table.scroll thead { display: block; }
+
+thead tr th { 
+    height: 30px;
+    line-height: 30px;
+    /* text-align: left; */
+}
+
+table.scroll tbody {
+    max-height: 290px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+tbody { border-top: 0px solid black; }
+
+tbody td, thead th {
+    /* width: 20%; */ /* Optional */
+    border-right: 0px solid black;
+    /* white-space: nowrap; */
+}
+
+tbody td:last-child, thead th:last-child {
+    border-right: none;
+}
+  </style>
+	<script type='text/javascript'>//<![CDATA[
+$(function(){
+// Change the selector if needed
+var $table = $('table.scroll'),
+    $bodyCells = $table.find('tbody tr:first').children(),
+    colWidth;
+
+// Adjust the width of thead cells when window resizes
+$(window).resize(function() {
+    // Get the tbody columns width array
+    colWidth = $bodyCells.map(function() {
+        return $(this).width();
+    }).get();
+    
+    // Set the width of thead columns
+    $table.find('thead tr').children().each(function(i, v) {
+        $(v).width(colWidth[i]);
+    });    
+}).resize(); // Trigger resize handler
+});//]]> 
+
+</script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+google.charts.load("current", {packages:["corechart"]});
+google.charts.setOnLoadCallback(drawCharts);
+
+function drawCharts () {
+    drawChartVisitor();
+    drawChartMonthlyActivities();
+}
+
+</script>		   
+      <div class="row">
+      <?php /*if($usertype == 0 || $usertype == 1){?>
+      	<?php
+	  	//if($this->data)
+		//{
+		?>
+        	<!--<div class="col-md-6">
+            	<div class="table-responsive" style="max-height:365px; overflow:auto;">
+            		<table class="table table-primary m30">
+                    	<thead>
+                     		<tr>
+                      			<th colspan="4"><i class="fa fa-eye"></i> User Viewed</th>
+                    		</tr>	
+                     		<tr>
+                      			<td>#</td>
+                    			<td>View Date</td>
+                        		<td>Headline</td>
+                        		<td align="center">Total</td>
+                      		</tr>	
+                    	</thead>
+                    	<tbody>
+                    		<?php 
+							//$i=0;
+					  		//foreach($this->data as $val)
+							//{
+							//	$viewDate = $val['viewDate'];	
+                			?>
+                        		<tr>
+                            		<td><?php //$i++;echo $i;?>.</td>
+                            		<td nowrap="nowrap"><?php //echo $viewDate;?></td>
+                            		<td><a href="<?php //echo $val['postURL'];?>" target="_blank"><?php //echo getPostName($val['post_id']);?></a></td>
+                            		<td align="center"><?php //echo $val['totalCount'];?></td>
+                            	</tr>
+							<?php
+							//} 
+							?>
+                    	</tbody>
+                	</table>
+            	</div>
+        	</div>-->
+        <?php //}}*/?>
+        <?php if($usertype == 2 || $usertype == 0 || $usertype == 1){
+			$mySQL = "";
+			$mySQL = "SELECT PC.post_id, P.headline, CONCAT(SUBSTRING_INDEX(intro, ' ', 10), '...') AS intro, image, thumb_image, COUNT(PC.post_id) AS totalCount, english_url, DATE_FORMAT(createdOn,'%d-%m-%Y') AS createdOn FROM `postcomment` PC INNER JOIN post P ON PC.post_Id = P.post_id WHERE P.isDeleted=0 AND P.status=1 GROUP BY PC.post_Id HAVING COUNT(PC.post_id) > 0 ORDER BY COUNT( PC.post_id ) DESC LIMIT 20";
+			$rsTemp = Zend_Registry::get("db")->fetchAll($mySQL);
+			
+			if($rsTemp)
+			{	
+		?>
+        		<div class="col-md-6">
+            		<div class="table-responsive" style="max-height:365px; overflow:auto;">
+                		<table class="table table-info mb30">
+                    		<thead>
+                      			<tr>
+                        			<th colspan="4"><i class="fa fa-comments"></i> User Comments</th>
+                    			</tr>	
+                     			<tr>
+                                    <td>#</td>
+                                    <td nowrap="nowrap">Comment Date</td>
+                                    <td>Headline</td>
+                                    <td align="center">Total</td>
+                                </tr>
+                           	</thead>
+                            
+						  	<?php 
+                            $i=0;
+                            $val1 = ""; 
+							foreach($rsTemp as $val1) 
+                            {
+                            	$createdOn = $val1['createdOn'];	
+                            ?>
+                                <tr>
+                                    <td><?php $i++;echo $i;?>.</td>
+                                    <td nowrap="nowrap"><?php echo $createdOn;?></td>
+                                    <td><a href="<?php echo $this->baseUrl().'/postdetail/index/id/'.$val1['post_id'].'/'.$val1['english_url'];?>" target="_blank"><?php echo getPostName($val1['post_id']);?></a></td>
+                                    <td align="center"><?php echo $val1['totalCount'];?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                    		
+                		</table>
+            		</div><!-- table-responsive -->
+        		</div>
+        <?php }}?>
+        <?php 
+		if($usertype == 0 || $usertype == 1){
+			$mySQL = "";
+			$mySQL = "SELECT COUNT(post_id) AS totalCount, CONCAT(YEAR(created), ' ', MONTHNAME(STR_TO_DATE(MONTH(created), '%m'))) AS monName FROM `post` WHERE isDeleted=0 AND status=1 GROUP BY MONTH(created) HAVING COUNT(created) > 0 ORDER BY CONCAT(YEAR(created), ' ', MONTH(created)) DESC LIMIT 12";
+			//echo $mySQL;
+			//exit;
+			$rsTemp = Zend_Registry::get("db")->fetchAll($mySQL);
+			
+			if($rsTemp)
+			{	
+		?>
+        		<div class="col-md-3">
+            		<div class="table-responsive" style="max-height:365px; overflow:auto;">
+                		<table class="table table-danger mb30">
+                    		<thead>
+                      			<tr>
+                        			<th colspan="2"><i class="fa fa-list"></i> Monthly News</th>
+                     		 	</tr>
+                    		</thead>
+                    		<tbody>
+                                <?php 
+								$i=0;
+								$val1 = ""; 
+								foreach($rsTemp as $val1) 
+								{
+									$monName = $val1['monName'];	
+								?>
+                                	<tr>
+                                        <td><?php echo $monName;?></td>
+                                        <td><?php echo $val1['totalCount'];?></td>
+                                    </tr>
+                              	<?php }?>
+                         	</tbody>
+                		</table>
+            		</div>
+        		</div>
+        <?php }}?>
+        <?php /*if($usertype == 0 || $usertype == 1){?>
+        <!--<div class="col-md-6">
+            <div class="table-responsive">
+                <table class="table table-success mb30">
+                    <thead>
+                      <tr>
+                        <th colspan="2"><i class="fa fa-user"></i> Visitor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+					//#####################
+					// TODAY
+					//#####################
+					/*$mySQL = "";
+					$mySQL .= "SELECT COUNT(*) AS totalVisitor FROM `visitor` WHERE DATE(visitDate) = CURDATE()";
+					//$mySQL .= " AND ipAddress <> '".$_SERVER['REMOTE_ADDR']."'";
+					$mySQL .= " AND domainURL LIKE '%".str_replace('www.', '', $host)."%'";
+					//echo $mySQL;
+					//exit;
+					$rsTemp = Zend_Registry::get("db")->fetchrow($mySQL);
+					
+					if($rsTemp)
+					{
+						$todayTotalVisitor = "";
+						$todayTotalVisitor = $rsTemp['totalVisitor'];
+					}
+					
+					//#####################
+					// TODAY
+					//#####################
+					$mySQL = "";
+					$mySQL .= "SELECT COUNT(*) AS totalVisitor FROM `visitor` WHERE DATE(visitDate) = DATE_ADD(CURDATE(),INTERVAL -1 DAY)";
+					//$mySQL .= " AND ipAddress <> '".$_SERVER['REMOTE_ADDR']."'";
+					$mySQL .= " AND domainURL LIKE '%".str_replace('www.', '', $host)."%'";
+					//echo $mySQL;
+					//exit;
+					$rsTemp = Zend_Registry::get("db")->fetchrow($mySQL);
+					
+					if($rsTemp)
+					{
+						$yesterdayTotalVisitor = "";
+						$yesterdayTotalVisitor = $rsTemp['totalVisitor'];
+					}
+					
+					$mySQL = "";
+					$mySQL = "SELECT COUNT(*) AS totalVisitor FROM `visitor` WHERE domainURL LIKE '%".str_replace('www.', '', $host)."%'";
+					//echo $mySQL;
+					//exit;
+					$rsTemp = Zend_Registry::get("db")->fetchrow($mySQL);
+					
+					if($rsTemp)
+					{
+						$totalVisitor = "";
+						$totalVisitor = $rsTemp['totalVisitor'];
+					}
+					?>
+                    	<tr>
+                        	<td>
+                            <script type="text/javascript">
+							//google.charts.load("current", {packages:["corechart"]});
+							//google.charts.setOnLoadCallback(drawChartVisitor);
+							function drawChartVisitor() {
+								var data = google.visualization.arrayToDataTable([
+									['Task', 'Hours per Day'],
+									['Today',	 <?php //echo $todayTotalVisitor;?>],
+									['Yesterday',<?php //echo $yesterdayTotalVisitor;?>],
+									['All Total',<?php //echo $totalVisitor;?>]
+								]);
+							
+								var options = {
+									title: '',	//'Monthly Activities',
+									is3D: true,
+								};
+							
+								var chart = new google.visualization.PieChart(document.getElementById('Visitor_Piechart_3d'));
+								chart.draw(data, options);
+							}
+							</script>
+                            <div id="Visitor_Piechart_3d" style="width: 500px; height: 250px;"></div>
+                            </td>
+                        </tr>-->
+                      <!--<tr>
+                        <td>Today</td>
+                        <td><?php //echo $todayTotalVisitor;?></td>
+                      </tr>
+                      <tr>
+                        <td>Yesterday</td>
+                        <td><?php //echo $yesterdayTotalVisitor;?></td>
+                      </tr>
+                      <tr>
+                        <td>All Total</td>
+                        <td><?php //echo $totalVisitor;?></td>
+                      </tr>-->
+                      <!--<tr>
+                        <td bgcolor="#c2bdbd"><a href="#">Total</a></td>
+                       <td bgcolor="#c2bdbd"><a href="#">125</a></td>
+                      </tr>-->
+                    <!--</tbody>
+                </table>
+            </div>
+        </div>-->
+        <?php //}*/?>
+        
+        
+        <?php 
+		if($usertype == 0 || $usertype == 1){
+			$mySQL = "";
+			$mySQL = "SELECT COUNT(post_id) AS totalCount, CONCAT(YEAR(created), ' ', MONTHNAME(STR_TO_DATE(MONTH(created), '%m'))) AS monName FROM `post` WHERE isDeleted=0 AND status=1 GROUP BY MONTH(created) HAVING COUNT(created) > 0 ORDER BY CONCAT(YEAR(created), ' ', MONTH(created)) DESC LIMIT 12";
+			//echo $mySQL;
+			//exit;
+			$rsTemp = Zend_Registry::get("db")->fetchAll($mySQL);
+			
+			if($rsTemp)
+			{	
+		?>
+				<!--<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
+                <script type="text/javascript">
+                //google.charts.load("current", {packages:["corechart"]});
+                //google.charts.setOnLoadCallback(drawChartMonthlyActivities);
+                function drawChartMonthlyActivities() {
+                    var data1 = google.visualization.arrayToDataTable([
+                        //['Task', 'Hours per Day'],
+                        <?php 
+                        $i=0;
+                        $val1 = ""; 
+                        foreach($rsTemp as $val1) 
+                        {
+                            $monName = $val1['monName'];	
+                        ?>
+                            ['<?php echo $monName;?>', <?php echo $val1['totalCount'];?>],
+                        <?php
+                        }
+                        ?>
+                        
+                        /*['Work',     11],
+                        ['Eat',      2],
+                        ['Commute',  2],
+                        ['Watch TV', 2],
+                        ['Sleep',    7]*/
+                    ]);
+                
+                    var options1 = {
+                        title: '',	//'Monthly Activities',
+                        is3D: true,
+                    };
+                
+                    var chart1 = new google.visualization.PieChart(document.getElementById('Monthly_Activities_Piechart_3d'));
+                    chart1.draw(data1, options1);
+                }
+                </script>
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table class="table table-info mb30">
+                            <thead>
+                              <tr>
+                                <th colspan="2"><i class="fa fa-calendar"></i>&nbsp;Monthly Activities</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><div id="Monthly_Activities_Piechart_3d" style="width: 500px; height: 250px;"></div></td>
+                              </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- table-responsive -->
+                </div>
+        <?php }}?>
+         <?php if($usertype == 0 || $usertype == 1){?>
+        <div class="col-md-3">
+            <div class="table-responsive">
+                <table class="table table-dark mb30">
+                    <thead>
+                      <tr>
+                        <th colspan="2"><i class="fa fa-home"></i>&nbsp;Manage Users</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><a href="#">Pending User</a></td>
+                        <td><a href="#">45</a></td>
+                      </tr>
+                      <tr>
+                        <td><a href="#">Approved User</a></td>
+                       <td><a href="#">80</a></td>
+                      </tr>
+                      <tr>
+                        <td bgcolor="#c2bdbd"><a href="#">Total</a></td>
+                       <td bgcolor="#c2bdbd"><a href="#">125</a></td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div><!-- table-responsive -->
+        </div>
+        <?php }?>
+   </div><!-- panel-body -->
+
+      </div><!-- contentpanel -->
+ </div><!-- mainpanel -->
+
+  <!-- rightpanel -->
+  
+  <?php
+  function getPostName($post_Id){
+	  if($post_Id > 0){
+			$mySQL = "SELECT headline FROm post WHERE post_id = '".$post_Id."'";  
+			$res = Zend_Registry::get("db")->fetchRow($mySQL);
+			
+			if($res){
+				return $res['headline'];
+			} else {
+				return;
+			}
+	  }	  
+  }
+  
+  ?>
