@@ -2,6 +2,29 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+	static function processCache( $cacheName, $sqlQuery ) {
+		require_once 'Zend/Cache.php';
+		$frontendOptions = array(
+		   'lifetime' => 300, // cache lifetime of 5 minutes
+		   'automatic_serialization' => true
+		);
+
+		$backendOptions = array(
+		    'cache_dir' => '/dev/shm/' // Directory where to put the cache files
+		);
+
+		// getting a Zend_Cache_Core object
+		$cache = Zend_Cache::factory('Core',
+                		             'File',
+		                             $frontendOptions,
+                		             $backendOptions);
+
+		if(!$result = $cache->load( $cacheName ) ) { echo '<!-- calling', $cacheName, '-->';
+		    $result = Zend_Registry::get("db")->fetchAll( $sqlQuery );
+		    $cache->save( $result, $cacheName );
+		}
+		return $result;
+	}
 
 	protected function _initDatabase(){
 		/*
@@ -312,7 +335,7 @@ function getPrevNextRec($action, $post_id, $city, $baseUrl, $position)
 	}
 	$mySQL = "";
 	$mySQL .= "SELECT post_id, CONCAT(SUBSTRING_INDEX(headline, ' ', 8), '...') AS headline, postType, english_url";
-	$mySQL .= " FROM `post` WHERE `status` = '1'";
+	$mySQL .= " FROM `post` WHERE `status` = 1";
 	//$mySQL .= " AND `city` = '".$city."'";
 	$mySQL .= $qry;
 	$mySQL .= " LIMIT 1";
@@ -352,7 +375,8 @@ function getBreakingnews(){
 	$sql .= " SELECT post_id AS id, headline AS breakingnews, 'MN' AS source, CONCAT('".$GLOBALS['baseUrl']."','/postdetail/index/id/', post_id, '/', english_url) AS link FROM `post` WHERE status = 1 AND `priority` IN (1,2,3,4,5) AND DATE(created) = '".date('Y-m-d')."' ORDER BY id DESC";
 	//echo $sql;
 	//exit;
-	$rsBreaking = Zend_Registry::get("db")->fetchAll($sql);
+	$rsBreaking = Bootstrap::processCache( 'getBreakingnews_' . date('Y-m-d'), $sql );
+	//$rsBreaking = Zend_Registry::get("db")->fetchAll($sql);
 	
 	if($rsBreaking){
 ?>
@@ -381,11 +405,12 @@ function getPriority()
 		//|| strpos(strtolower($_SERVER['REQUEST_URI']), 'liveindia.live/index/') == ''
     ){
 		$mySQL = "";
-		//$mySQL = "SELECT post_id, headline, postType, english_url, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 30), '') AS intro, CONCAT(SUBSTRING_INDEX(intro, ' ', 8), '') AS intro1 FROM `post` WHERE `city` = '".$GLOBALS['city']."' AND `priority` = '".$priority."' AND `status` = '1'"; // ORDER BY editedOn DESC";
-		$mySQL = "SELECT post_id, headline, postType, english_url, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 30), '') AS intro, CONCAT(SUBSTRING_INDEX(intro, ' ', 8), '') AS intro1, videoURL FROM `post` WHERE `priority` IN (1,2,3,4,5) AND `status` = '1' ORDER BY priority";
+		//$mySQL = "SELECT post_id, headline, postType, english_url, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 30), '') AS intro, CONCAT(SUBSTRING_INDEX(intro, ' ', 8), '') AS intro1 FROM `post` WHERE `city` = '".$GLOBALS['city']."' AND `priority` = '".$priority."' AND `status` = 1"; // ORDER BY editedOn DESC";
+		$mySQL = "SELECT post_id, headline, postType, english_url, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 30), '') AS intro, CONCAT(SUBSTRING_INDEX(intro, ' ', 8), '') AS intro1, videoURL FROM `post` WHERE `priority` IN (1,2,3,4,5) AND `status` = 1 ORDER BY priority";
 		//echo $mySQL;
 		//exit;
-		$rsTemp1 = Zend_Registry::get("db")->fetchAll($mySQL);
+		$rsTemp1 = Bootstrap::processCache( 'getPriority', $mySQL );
+		//$rsTemp1 = Zend_Registry::get("db")->fetchAll($mySQL);
 		//print_r($res);die();
 		
 		if ($rsTemp1)
@@ -499,11 +524,12 @@ function getPriority()
 function getRightColumnVideo()
 {
 	$mySQL = "";
-	//$mySQL = "SELECT post_id, headline, english_url, videourl, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 20), '...') AS intro FROM `post` WHERE `city` = '".$GLOBALS['city']."' AND `status` = '1' AND videourl <> '' ORDER BY post_id DESC LIMIT 1";
-	$mySQL = "SELECT post_id, headline, english_url, videourl, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 20), '...') AS intro FROM `post` WHERE `status` = '1' AND videourl <> '' ORDER BY post_id DESC LIMIT 1";
+	//$mySQL = "SELECT post_id, headline, english_url, videourl, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 20), '...') AS intro FROM `post` WHERE `city` = '".$GLOBALS['city']."' AND `status` = 1 AND videourl <> '' ORDER BY post_id DESC LIMIT 1";
+	$mySQL = "SELECT post_id, headline, english_url, videourl, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 20), '...') AS intro FROM `post` WHERE `status` = 1 AND videourl <> '' ORDER BY post_id DESC LIMIT 1";
 	//echo $mySQL;
 	//exit;
-	$rsTemp = Zend_Registry::get("db")->fetchRow($mySQL);
+	$rsTemp = Bootstrap::processCache( 'getRightColumnVideo_' . $GLOBALS['city'], $mySql );
+	//$rsTemp = Zend_Registry::get("db")->fetchRow($mySQL);
 	//print_r($res);die();
 	
 	
@@ -528,10 +554,10 @@ function getRightColumnVideo()
 function getRightColumnVideoOLD()
 {
 	$mySQL = "";
-	$mySQL = "SELECT post_id, headline, english_url, videourl, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 20), '...') AS intro FROM `post` WHERE `city` = '".$GLOBALS['city']."' AND `status` = '1' AND videourl <> '' ORDER BY post_id DESC LIMIT 1";
-	//echo $mySQL;
+	$mySQL = "SELECT post_id, headline, english_url, videourl, image, thumb_image, CONCAT(SUBSTRING_INDEX(intro, ' ', 20), '...') AS intro FROM `post` WHERE `city` = '".$GLOBALS['city']."' AND `status` = 1 AND videourl <> '' ORDER BY post_id DESC LIMIT 1"; //echo $mySQL;
 	//exit;
-	$rsTemp = Zend_Registry::get("db")->fetchRow($mySQL);
+	$rsTemp = Bootstrap::processCache( 'getRightColumnVideoOLD_' . $GLOBALS['city'], $mySql );
+
 	//print_r($res);die();
 	
 	if ($rsTemp)
@@ -809,15 +835,17 @@ function getTopMenuCategoryWisePost($position){
 					getTopMenuSubCategory($rsCatVal['category_id']);
 					$subCategory_Id = getSubCategoryId($rsCatVal['category_id']);
 						
-					$mySql  = "SELECT P.post_id, P.headline, P.image, P.english_url FROM post P JOIN post_category PC ON P.post_id = PC.post_id";
+					$mySql  = "SELECT DISTINCT( P.post_id ), P.headline, P.image, P.english_url FROM post P JOIN post_category PC ON P.post_id = PC.post_id";
 					$mySql .= " WHERE status = 1";
 					$mySql .= " AND category_id IN (".$rsCatVal['category_id'].','.$subCategory_Id.")";
 					//$mySql .= " AND category_id IN (".$subCategory_Id."))";
-					$mySql .= " GROUP BY P.post_id ORDER BY P.post_id DESC";
+					//$mySql .= " GROUP BY P.post_id ORDER BY P.post_id DESC";
+					$mySql .= " ORDER BY P.post_id DESC";			
 					$mySql .= " LIMIT 4";
 					//echo $mySql;
 					//exit;
-					$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
+					$rsTemp = Bootstrap::processCache( 'getTopMenuCategoryWisePost_' . $rsCatVal['category_id'] . '_' . str_replace( ',', '_', $subCategory_Id ), $mySql );		
+					//$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
 					
 					if($rsTemp)
 					{ 
@@ -924,7 +952,8 @@ function getMainBodyCategoryWisePost($position, $category){
 			$mySql .= " LIMIT 6";
 			//echo $mySql;
 			//exit;
-			$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
+			$rsTemp = Bootstrap::processCache( 'getMainBodyCategoryWisePost_' . $rsCat['category_id'], $mySql );
+			//$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
 			
 			if($rsTemp)
 			{ 
@@ -1071,7 +1100,8 @@ function getRightBodyCategoryWisePost($position, $category){
 			}
 			//echo $mySql;
 			//exit;
-			$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
+			$rsTemp = Bootstrap::processCache( 'getRightBodyCategoryWisePost_' . $rsCat['category_id'], $mySql );
+			//$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
 			
 			if($rsTemp)
 			{ 
@@ -1269,7 +1299,8 @@ function getMainBodyCategoryWisePostOnDetailPage($position, $category){
 			$mySql .= " LIMIT 3";
 			//echo $mySql;
 			//exit;
-			$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
+			$rsTemp = Bootstrap::processCache( 'getMainBodyCategoryWisePostOnDetailPage_' . $rsCat['category_id'], $mySql );
+			//$rsTemp = Zend_Registry::get("db")->fetchAll($mySql);
 			
 			if($rsTemp)
 			{ 
