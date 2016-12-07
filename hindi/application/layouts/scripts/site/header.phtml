@@ -8,7 +8,7 @@ ob_start();
 //} 
 
 $_SESSION['timeout'] = 120;
-
+echo 'test comment2222222222';
 $adminsession=new Zend_Session_Namespace('admin');
 $obj = new Default_Model_DbTable_User();
 $recods = $obj->getAdminByUser($adminsession->username);
